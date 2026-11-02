@@ -202,38 +202,38 @@ function loadFromExcel() {
             return res.text();
         }).catch(() => null)
     ])
-    .then(([buf1, buf2, metalCsvText]) => {
-        const wb1 = XLSX.read(buf1, { type: 'array' });
-        const sheet1 = wb1.Sheets[wb1.SheetNames[0] || 'wip001_pp'];
-        const rows1 = XLSX.utils.sheet_to_json(sheet1, { defval: '' });
+        .then(([buf1, buf2, metalCsvText]) => {
+            const wb1 = XLSX.read(buf1, { type: 'array' });
+            const sheet1 = wb1.Sheets[wb1.SheetNames[0] || 'wip001_pp'];
+            const rows1 = XLSX.utils.sheet_to_json(sheet1, { defval: '' });
 
-        let rows2 = [];
-        if (buf2) {
-            try {
-                const wb2 = XLSX.read(buf2, { type: 'array' });
-                const sheet2 = wb2.Sheets[wb2.SheetNames[0] || 'wip002_pr'];
-                rows2 = XLSX.utils.sheet_to_json(sheet2, { defval: '' });
-            } catch (e) {
-                console.warn('Could not parse wip002_pr.xls lookup:', e);
+            let rows2 = [];
+            if (buf2) {
+                try {
+                    const wb2 = XLSX.read(buf2, { type: 'array' });
+                    const sheet2 = wb2.Sheets[wb2.SheetNames[0] || 'wip002_pr'];
+                    rows2 = XLSX.utils.sheet_to_json(sheet2, { defval: '' });
+                } catch (e) {
+                    console.warn('Could not parse wip002_pr.xls lookup:', e);
+                }
             }
-        }
 
-        if (!rows1 || rows1.length === 0) {
-            throw new Error('ملف wip001_pp.xls فارغ أو تعذر قراءة الصفوف.');
-        }
+            if (!rows1 || rows1.length === 0) {
+                throw new Error('ملف wip001_pp.xls فارغ أو تعذر قراءة الصفوف.');
+            }
 
-        processData(rows1, rows2, metalCsvText);
+            processData(rows1, rows2, metalCsvText);
 
-        if (loadingScreen) {
-            setTimeout(() => {
-                loadingScreen.classList.add('hidden');
-            }, 300);
-        }
-    })
-    .catch(err => {
-        console.error('Error loading data:', err);
-        if (loadingScreen) {
-            loadingScreen.innerHTML = `
+            if (loadingScreen) {
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                }, 300);
+            }
+        })
+        .catch(err => {
+            console.error('Error loading data:', err);
+            if (loadingScreen) {
+                loadingScreen.innerHTML = `
                 <div class="loader-container">
                     <div style="color: #dc2626; font-size: 1.25rem; font-weight: 800; font-family: var(--font-ar);">
                         خطأ في قراءة ملفات الإنتاج (wip001_pp)
@@ -248,8 +248,8 @@ function loadFromExcel() {
                     </div>
                 </div>
             `;
-        }
-    });
+            }
+        });
 }
 
 // ===== 2) Process and Normalize Data =====
@@ -1320,14 +1320,14 @@ function processDailyFile(file) {
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
-            complete: function(results) {
+            complete: function (results) {
                 if (results.data && results.data.length > 0) {
                     handleParsedRows(results.data, name);
                 } else {
                     showToast('Empty File', 'No rows found in CSV file', '⚠️');
                 }
             },
-            error: function(err) {
+            error: function (err) {
                 showToast('Read Error', err.message, '❌');
             }
         });
@@ -1337,7 +1337,7 @@ function processDailyFile(file) {
             return;
         }
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             try {
                 const data = new Uint8Array(e.target.result);
                 const wb = XLSX.read(data, { type: 'array' });
