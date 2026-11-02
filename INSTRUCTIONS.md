@@ -69,3 +69,4 @@ The main machines table displays columns in this exact sequence:
 8. **Shift 3**: Shift 3 production in km.
 9. **Production km/day**: Total daily production output in **km/day**.
 10. **Cable Type**: Cable category / Family ID (`LV`, `MV`, `HV`).
+

@@ -24,8 +24,8 @@
     const STANDARD_PRESETS = [
         {
             id: 'aggregate',
-            name: '🌟 كابل مجموع الإنتاج (Combined Data)',
-            desc: 'النموذج العام الممثل لإجمالي إنتاج القسم في الفترة',
+            name: '🌟 Combined Aggregate Cable (All Specs)',
+            desc: 'Representative model combining all production orders in selected period',
             cores: 4,
             mat: 'AL',
             insulation: 'XLPE',
@@ -36,8 +36,8 @@
         },
         {
             id: 'cu_1c_pvc',
-            name: '⚡ كابل مفرد نحاس (1x4 mm² CU)',
-            desc: 'سلك بناء وتمديدات نحاس مجدول معزول PVC',
+            name: '⚡ Single-Core Copper Cable (1x4 mm² CU)',
+            desc: 'Stranded copper building wire insulated with PVC',
             cores: 1,
             mat: 'CU',
             insulation: 'PVC',
@@ -48,8 +48,8 @@
         },
         {
             id: 'al_4c_sta',
-            name: '⚡ كابل قوى 4-Core ألومنيوم مسلّح (4x25 mm²)',
-            desc: 'كابل قوى جهد منخفض ألومنيوم معزول XLPE ومسلح بشريط صلب',
+            name: '⚡ 4-Core Armoured Aluminum Power Cable (4x25 mm²)',
+            desc: 'Low-voltage aluminum cable insulated with XLPE, STA steel tape armour',
             cores: 4,
             mat: 'AL',
             insulation: 'XLPE',
@@ -60,8 +60,8 @@
         },
         {
             id: 'al_3c_mv',
-            name: '⚡ كابل جهد متوسط 3-Core (12/20 KV)',
-            desc: 'كابل قوى جهد متوسط 3 قلوب ألومنيوم معزول XLPE ومسلح',
+            name: '⚡ Medium-Voltage 3-Core Cable (12/20 KV)',
+            desc: '3-Core medium-voltage power cable with XLPE insulation and metallic armour',
             cores: 3,
             mat: 'AL',
             insulation: 'XLPE',
@@ -72,8 +72,8 @@
         },
         {
             id: 'acsr_bare',
-            name: '⚡ موصل هوائي مجدول (ACSR 150/25)',
-            desc: 'موصل هوائي من الألومنيوم المقوى بالصلب بدون عزل',
+            name: '⚡ Overhead Stranded Conductor (ACSR 150/25)',
+            desc: 'Bare aluminum conductor steel-reinforced (ACSR) without insulation',
             cores: 1,
             mat: 'AL',
             insulation: 'NONE',
@@ -84,8 +84,8 @@
         },
         {
             id: 'cu_12c_ctrl',
-            name: '⚡ كابل تحكم متعدد القلوب (12x1.5 mm² CU)',
-            desc: 'كابل إشارات وتحكم نحاسي 12 قلب مع شريط نحاسي وغلاف PVC',
+            name: '⚡ Multi-Core Control Cable (12x1.5 mm² CU)',
+            desc: '12-core copper signal and control cable with screening and PVC sheath',
             cores: 12,
             mat: 'CU',
             insulation: 'PVC',
@@ -287,7 +287,7 @@
         conductorsGroup.name = 'ConductorLayerGroup';
         conductorsGroup.userData = {
             layerId: 'conductor',
-            layerNameAr: 'الموصلات المجدولة (Conductor Strands)',
+            layerNameAr: 'Conductor Strands',
             layerNameEn: `${matType === 'CU' ? 'Copper' : 'Aluminum'} Stranded Conductors`,
             desc: `قلب الكابل الناقل للتيار مصنوع من أسلاك ${matType === 'CU' ? 'نحاس إلكتروليتي نقي' : 'ألومنيوم مقسى مجدول'} لنقل الطاقة بأعلى كفاءة.`
         };
@@ -296,7 +296,7 @@
         insulationsGroup.name = 'InsulationLayerGroup';
         insulationsGroup.userData = {
             layerId: 'insulation',
-            layerNameAr: `طبقة العازل الأساسي (${insType})`,
+            layerNameAr: `Primary Insulation Layer (${insType})`,
             layerNameEn: `${insType} Primary Insulation`,
             desc: `عزل متين من مادة ${insType === 'XLPE' ? 'البولي إيثيلين المشبك (XLPE) المقاوم للحرارة حتى 90°C' : 'بولي فينيل كلوريد (PVC)'} بألوان قياسية للتمييز.`
         };
@@ -419,9 +419,9 @@
         beddingGroup.name = 'BeddingLayerGroup';
         beddingGroup.userData = {
             layerId: 'bedding',
-            layerNameAr: 'الحشوة والغلاف الداخلي (Bedding & Filler)',
+            layerNameAr: 'Bedding & Filler Layer',
             layerNameEn: 'Extruded Inner Covering & PP Fillers',
-            desc: 'طبقة حشو وتغليف داخلية تحافظ على استدارة الكابل وتوفر وسادة حماية تحت طبقة التسليح.'
+            desc: 'Inner bedding and extruded filler to maintain circular geometry and cushion under armour.'
         };
 
         const beddingInnerR = orbitRadius + coreRadius * 1.36;
@@ -506,9 +506,9 @@
         sheathGroup.name = 'OuterSheathLayerGroup';
         sheathGroup.userData = {
             layerId: 'sheath',
-            layerNameAr: `الغلاف الخارجي (${isMV ? 'HDPE أحمر للجهد المتوسط' : 'PVC أسود مقاوم للأشعة فوق البنفسجية'})`,
+            layerNameAr: `Outer Sheath (${isMV ? 'Red HDPE (Medium Voltage)' : 'Black UV-resistant PVC'})`,
             layerNameEn: `Outer Protective Jacket (${isMV ? 'Red HDPE' : 'Black PVC'})`,
-            desc: 'غلاف قوي مانع لنفاذ الرطوبة ومقاوم للأشعة فوق البنفسجية والعوامل الجوية مع طباعة مواصفات الكابل.'
+            desc: 'Tough outer jacket providing moisture barrier, UV resistance, and environmental protection.'
         };
 
         const sheathInnerR = armourOuterR + 0.05;
@@ -672,7 +672,7 @@
         const btn = document.getElementById('btnToggleAutoRotate');
         if (btn) {
             btn.classList.toggle('active', isAutoRotating);
-            btn.title = isAutoRotating ? 'إيقاف الدوران التلقائي' : 'تشغيل الدوران التلقائي';
+            btn.title = isAutoRotating ? 'Stop Auto Rotation' : 'Start Auto Rotation';
             const icon = btn.querySelector('.icon');
             if (icon) icon.textContent = isAutoRotating ? '⏸️' : '▶️';
         }
@@ -795,7 +795,7 @@
     function showTooltip(x, y, data) {
         if (!tooltipEl) return;
         tooltipEl.innerHTML = `
-            <div class="tip-layer-badge">${data.layerNameAr || 'طبقة الكابل'}</div>
+            <div class="tip-layer-badge">${data.layerNameAr || 'Cable Layer'}</div>
             <div class="tip-layer-en">${data.layerNameEn || ''}</div>
             <div class="tip-layer-desc">${data.desc || ''}</div>
             <div class="tip-data-stat">${getLayerAggregatedMetric(data.layerId)}</div>
@@ -813,16 +813,16 @@
         const stats = computeAggregates(activeData);
         switch (layerId) {
             case 'conductor':
-                return `📊 إجمالي موصلات الفترة: <strong>${stats.totalLength.toLocaleString()} م</strong> (نحاس: ${stats.cuMeters.toLocaleString()} م | ألومنيوم: ${stats.alMeters.toLocaleString()} م)`;
+                return `📊 Conductor Total: <strong>${stats.totalLength.toLocaleString()} m</strong> (CU: ${stats.cuMeters.toLocaleString()} m | AL: ${stats.alMeters.toLocaleString()} m)`;
             case 'insulation':
-                return `📊 العزل المجمع: <strong>${stats.totalLength.toLocaleString()} م</strong> (جهد منخفض: ${stats.lvMeters.toLocaleString()} م | جهد متوسط: ${stats.mvMeters.toLocaleString()} م)`;
+                return `📊 Total Insulated: <strong>${stats.totalLength.toLocaleString()} m</strong> (LV: ${stats.lvMeters.toLocaleString()} m | MV: ${stats.mvMeters.toLocaleString()} m)`;
             case 'armour':
-                return `📊 تسليح وحماية: <strong>${stats.staMeters.toLocaleString()} م</strong> أشرطة صلب مجلفن`;
+                return `📊 Steel Armour: <strong>${stats.staMeters.toLocaleString()} m</strong> galvanized steel tape`;
             case 'sheath':
                 return `📊 إجمالي إنتاج الكابلات التام: <strong>${stats.totalLength.toLocaleString()} م</strong> | الوزن: <strong>${stats.totalWeightTons} طن</strong>`;
             case 'bedding':
             default:
-                return `📊 حشوات داخلية لكامل إنتاج الـ <strong>${stats.totalOrders.toLocaleString()} أمر تشغيل</strong>`;
+                return `📊 Inner Bedding for <strong>${stats.totalOrders.toLocaleString()} Work Orders</strong>`;
         }
     }
 
@@ -998,7 +998,7 @@
         return {
             id: 'custom_' + Date.now(),
             name: `${cores}C x ${sizeStr || 'Size'} ${mat} (${insulation}/${armour})`,
-            desc: cableStr || 'كابل كهربائي قياسي لقسم المعادن',
+            desc: cableStr || 'Metals Department Standard Cable',
             cores,
             mat,
             insulation,
@@ -1037,7 +1037,7 @@
                 ? parseCableToSpec(topCable.cable, topCable.size, topCable.mat, topCable.familyid)
                 : { ...STANDARD_PRESETS[0], mat: dominantMat };
 
-            dominantSpec.name = `🌟 نموذج مجموع الإنتاج (${stats.totalLength.toLocaleString()} م)`;
+            dominantSpec.name = `🌟 Combined Aggregate Model (${stats.totalLength.toLocaleString()} m)`;
             buildCableModel(dominantSpec);
         } else {
             // Keep current selected model updated with fresh stats
@@ -1052,10 +1052,10 @@
         const elOrders = document.getElementById('cable3dTotalOrders');
         const elDrumAvg = document.getElementById('cable3dDrumAvg');
 
-        if (elLength) elLength.textContent = `${stats.totalLength.toLocaleString()} م`;
-        if (elWeight) elWeight.textContent = `${stats.totalWeightTons} طن (${stats.totalWeightKg.toLocaleString()} كجم)`;
-        if (elOrders) elOrders.textContent = `${stats.totalOrders.toLocaleString()} أمر`;
-        if (elDrumAvg) elDrumAvg.textContent = `${stats.drumAvgLength.toLocaleString()} م`;
+        if (elLength) elLength.textContent = `${stats.totalLength.toLocaleString()} m`;
+        if (elWeight) elWeight.textContent = `${stats.totalWeightTons} tons (${stats.totalWeightKg.toLocaleString()} kg)`;
+        if (elOrders) elOrders.textContent = `${stats.totalOrders.toLocaleString()} Orders`;
+        if (elDrumAvg) elDrumAvg.textContent = `${stats.drumAvgLength.toLocaleString()} m`;
 
         // Conductor Split Bar
         const barCu = document.getElementById('cable3dBarCU');
@@ -1069,18 +1069,18 @@
         if (textAl) textAl.textContent = `ألومنيوم (AL): ${stats.alMeters.toLocaleString()} م (${stats.alPct}%) | ${(stats.alWeight / 1000).toFixed(1)} طن`;
 
         // Families Breakdown
-        renderFamilyPill('cableFamLV', 'جهد منخفض LV', stats.lvMeters, stats.totalLength);
-        renderFamilyPill('cableFamMV', 'جهد متوسط MV', stats.mvMeters, stats.totalLength);
-        renderFamilyPill('cableFamBC', 'هوائي مجدول BC', stats.bcMeters, stats.totalLength);
-        renderFamilyPill('cableFamCC', 'تحكم وإشارات CC', stats.ccMeters, stats.totalLength);
-        renderFamilyPill('cableFamHV', 'جهد عالي HV', stats.hvMeters, stats.totalLength);
+        renderFamilyPill('cableFamLV', 'Low Voltage (LV)', stats.lvMeters, stats.totalLength);
+        renderFamilyPill('cableFamMV', 'Medium Voltage (MV)', stats.mvMeters, stats.totalLength);
+        renderFamilyPill('cableFamBC', 'Bare Conductor (BC)', stats.bcMeters, stats.totalLength);
+        renderFamilyPill('cableFamCC', 'Control Cable (CC)', stats.ccMeters, stats.totalLength);
+        renderFamilyPill('cableFamHV', 'High Voltage (HV)', stats.hvMeters, stats.totalLength);
     }
 
     function renderFamilyPill(elId, label, meters, total) {
         const el = document.getElementById(elId);
         if (!el) return;
         const pct = total > 0 ? ((meters / total) * 100).toFixed(1) : 0;
-        el.innerHTML = `<strong>${label}</strong><span>${meters.toLocaleString()} م (${pct}%)</span>`;
+        el.innerHTML = `<strong>${label}</strong><span>${meters.toLocaleString()} m (${pct}%)</span>`;
         el.style.display = meters > 0 ? 'inline-flex' : 'none';
     }
 
@@ -1088,10 +1088,10 @@
         const sel = document.getElementById('cable3dSelectProduct');
         if (!sel) return;
 
-        sel.innerHTML = '<option value="aggregate">🌟 كابل مجموع الإنتاج الإجمالي (Combined Aggregate)</option>';
+        sel.innerHTML = '<option value="aggregate">🌟 Combined Aggregate Cable (All Specs)</option>';
 
         const optGroupPresets = document.createElement('optgroup');
-        optGroupPresets.label = 'النماذج الهندسية القياسية';
+        optGroupPresets.label = 'Standard Engineering Models';
         STANDARD_PRESETS.slice(1).forEach(p => {
             const opt = document.createElement('option');
             opt.value = 'preset_' + p.id;
@@ -1102,11 +1102,11 @@
 
         if (topCables && topCables.length > 0) {
             const optGroupData = document.createElement('optgroup');
-            optGroupData.label = `كابلات أوامر التشغيل الفعلية بالداتا (${topCables.length} كابل)`;
+            optGroupData.label = `Actual Work Order Cables (${topCables.length} Cables)`;
             topCables.slice(0, 40).forEach((c, idx) => {
                 const opt = document.createElement('option');
                 opt.value = 'data_' + idx;
-                opt.textContent = `#${idx + 1} [${c.length.toLocaleString()} م] - ${c.cable}`;
+                opt.textContent = `#${idx + 1} [${c.length.toLocaleString()} m] - ${c.cable}`;
                 optGroupData.appendChild(opt);
             });
             sel.appendChild(optGroupData);
@@ -1125,7 +1125,7 @@
                 ? parseCableToSpec(topCable.cable, topCable.size, topCable.mat, topCable.familyid)
                 : STANDARD_PRESETS[0];
             dominantSpec.id = 'aggregate';
-            dominantSpec.name = `🌟 كابل مجموع الإنتاج (${stats.totalLength.toLocaleString()} م)`;
+            dominantSpec.name = `🌟 Aggregate Cable (${stats.totalLength.toLocaleString()} m)`;
             buildCableModel(dominantSpec);
         } else if (val.startsWith('preset_')) {
             const pid = val.replace('preset_', '');
@@ -1176,12 +1176,12 @@
                     <div class="top-cable-name" title="${c.cable}">${c.cable}</div>
                     <div class="top-cable-meta">
                         <span class="cable-mat-pill ${matBadgeClass}">${c.mat || 'AL'}</span>
-                        <span class="cable-meta-len">⚡ <strong>${c.length.toLocaleString()}</strong> م</span>
-                        <span class="cable-meta-wt">⚖️ <strong>${Math.round(c.weight / 1000)}</strong> طن</span>
-                        <span class="cable-meta-ord">📦 ${c.orders} أمر</span>
+                        <span class="cable-meta-len">⚡ <strong>${c.length.toLocaleString()}</strong> m</span>
+                        <span class="cable-meta-wt">⚖️ <strong>${Math.round(c.weight / 1000)}</strong> tons</span>
+                        <span class="cable-meta-ord">📦 ${c.orders} Orders</span>
                     </div>
                 </div>
-                <button class="btn-inspect-3d" title="عرض هذا الكابل في الـ 3D">
+                <button class="btn-inspect-3d" title="Inspect this cable in 3D">
                     👁️ 3D
                 </button>
             `;
@@ -1200,7 +1200,7 @@
         const elSheath = document.getElementById('activeSpecSheath');
         const elProduced = document.getElementById('activeSpecProduced');
 
-        if (elTitle) elTitle.textContent = spec.name || 'كابل الإنتاج';
+        if (elTitle) elTitle.textContent = spec.name || 'Cable Specification';
         if (elVolt) elVolt.textContent = spec.voltage || '0.6/1 KV';
         if (elCond) elCond.textContent = `${spec.cores || 1} قلب × ${spec.size || '-'} (${spec.mat === 'CU' ? 'نحاس مجدول CU' : 'ألومنيوم مجدول AL'})`;
         if (elIns) elIns.textContent = spec.isBare ? 'بدون عزل (موصل هوائي)' : `${spec.insulation || 'XLPE'} عالي المتانة`;

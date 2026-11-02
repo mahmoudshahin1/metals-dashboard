@@ -78,8 +78,15 @@ body {
 }
 
 .loading-screen.hidden {
+
     opacity: 0;
+
     visibility: hidden;
+
+    pointer-events: none;
+
+    display: none !important;
+
 }
 
 .loader-container {
@@ -1824,10 +1831,11 @@ body {
     border-right: 4px solid #22c55e;
 }
 
-.toast-notification.hidden {
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
+.toast-notification.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    display: none !important;
 }
 
 .toast-icon {

@@ -92,16 +92,25 @@ function loadData() {
     const loadingScreen = document.getElementById('loadingScreen');
     if (loadingScreen) loadingScreen.classList.remove('hidden');
 
-    // 1) إذا كانت البيانات محملة مسبقاً عبر سكربت metals_data.js (يعمل مباشرة وبدون سيرفر محلي عند فتح index.html مباشرة من الديسكتوب)
-    if (typeof window.METALS_DATA !== 'undefined' && Array.isArray(window.METALS_DATA) && window.METALS_DATA.length > 0) {
-        console.log(`[Data] تم تحميل ${window.METALS_DATA.length} سجل بنجاح من ملف metals_data.js.`);
-        initFromPrecompiled(window.METALS_DATA);
+    try {
+        // 1) إذا كانت البيانات محملة مسبقاً عبر سكربت metals_data.js (يعمل مباشرة وبدون سيرفر محلي عند فتح index.html مباشرة من الديسكتوب)
+        if (typeof window.METALS_DATA !== 'undefined' && Array.isArray(window.METALS_DATA) && window.METALS_DATA.length > 0) {
+            console.log(`[Data] Loaded ${window.METALS_DATA.length} records successfully.`);
+            initFromPrecompiled(window.METALS_DATA);
+            if (loadingScreen) {
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                }, 150);
+            }
+            return;
+        }
+    } catch (err) {
+        console.error('[loadData error]:', err);
         if (loadingScreen) {
             setTimeout(() => {
                 loadingScreen.classList.add('hidden');
             }, 150);
         }
-        return;
     }
 
     const vParam = typeof BUILD_VERSION !== 'undefined' ? BUILD_VERSION : Date.now();
@@ -499,6 +508,14 @@ function extractFamilyFromCable(cable, volt) {
     return 'LV';
 }
 
+function getFamilyClass(familyId) {
+    const f = String(familyId || '').toUpperCase().trim();
+    if (f === 'MV' || f.includes('MV')) return 'mv';
+    if (f === 'LV' || f.includes('LV')) return 'lv';
+    if (f === 'HV' || f.includes('HV')) return 'hv';
+    return 'other';
+}
+
 // ===== 4) Date Parsing Helpers =====
 function parseExcelDate(val) {
     if (val === undefined || val === null || val === '') return null;
@@ -545,11 +562,11 @@ function populateMachineDropdowns() {
         selMain.innerHTML = '';
         const optAll = document.createElement('option');
         optAll.value = 'all';
-        optAll.textContent = 'جميع الماكينات المعروضة';
+        optAll.textContent = 'All Displayed Machines';
         selMain.appendChild(optAll);
 
         const grpCore = document.createElement('optgroup');
-        grpCore.label = 'الماكينات الأساسية (10)';
+        grpCore.label = 'Core Machines (10)';
         core.forEach(m => {
             const opt = document.createElement('option');
             opt.value = m;
@@ -559,7 +576,7 @@ function populateMachineDropdowns() {
         selMain.appendChild(grpCore);
 
         const grpBn = document.createElement('optgroup');
-        grpBn.label = 'البناشر (BN: 5 ماكينات)';
+        grpBn.label = 'Bunchers (BN: 5 Machines)';
         bunchers.forEach(m => {
             const opt = document.createElement('option');
             opt.value = m;
@@ -575,11 +592,11 @@ function populateMachineDropdowns() {
         selDetail.innerHTML = '';
         const optAll = document.createElement('option');
         optAll.value = 'all';
-        optAll.textContent = 'جميع الماكينات';
+        optAll.textContent = 'All Machines';
         selDetail.appendChild(optAll);
 
         const grpCore = document.createElement('optgroup');
-        grpCore.label = 'الماكينات الأساسية (10)';
+        grpCore.label = 'Core Machines (10)';
         core.forEach(m => {
             const opt = document.createElement('option');
             opt.value = m;
@@ -589,7 +606,7 @@ function populateMachineDropdowns() {
         selDetail.appendChild(grpCore);
 
         const grpBn = document.createElement('optgroup');
-        grpBn.label = 'البناشر (BN)';
+        grpBn.label = 'Bunchers (BN)';
         bunchers.forEach(m => {
             const opt = document.createElement('option');
             opt.value = m;
@@ -604,7 +621,7 @@ function populateFamilyDropdown() {
     const families = [...new Set(rawData.map(r => r.familyid).filter(Boolean))].sort();
     const sel = document.getElementById('detailFilterFamily');
     if (sel) {
-        sel.innerHTML = '<option value="all">جميع Family IDs</option>';
+        sel.innerHTML = '<option value="all">All Family IDs</option>';
         families.forEach(f => {
             const opt = document.createElement('option');
             opt.value = f;
@@ -662,7 +679,7 @@ function toggleBunchers() {
     if (btn) {
         btn.classList.toggle('active', showBunchers);
         if (txt) {
-            txt.textContent = showBunchers ? 'إخفاء البناشر (BN)' : 'عرض البناشر (BN: 5 ماكينات)';
+            txt.textContent = showBunchers ? 'Hide Bunchers (BN)' : 'Show Bunchers (BN: 5 Machines)';
         }
         const icon = btn.querySelector('.toggle-icon');
         if (icon) {
@@ -701,7 +718,7 @@ function applyFilters() {
         if (from === to) {
             dateLabel.textContent = `📅 ${formatArabicDateFull(from)} (${fromDisp})`;
         } else {
-            dateLabel.textContent = `📅 من ${fromDisp} إلى ${toDisp} (${distinctDays} ${distinctDays === 1 ? 'يوم' : 'أيام'})`;
+            dateLabel.textContent = `📅 From ${fromDisp} to ${toDisp} (${distinctDays} ${distinctDays === 1 ? 'day' : 'days'})`;
         }
     }
 
@@ -719,9 +736,9 @@ function applyFilters() {
     const tableSubtitle = document.getElementById('tableSubtitleDate');
     if (tableSubtitle) {
         if (from === to) {
-            tableSubtitle.textContent = `تقرير إنتاجية يوم: ${formatArabicDateFull(from)} | المستهدف محسوب على 1 يوم`;
+            tableSubtitle.textContent = `Daily Production Report: ${formatDateFull(from)} | Target calculated on 1 day`;
         } else {
-            tableSubtitle.textContent = `تقرير إنتاجية الفترة: من ${fromDisp} إلى ${toDisp} | المستهدف محسوب على ${distinctDays} أيام`;
+            tableSubtitle.textContent = `Period Production Report: From ${fromDisp} to ${toDisp} | Target calculated on ${distinctDays} days`;
         }
     }
 
@@ -846,7 +863,7 @@ function renderKPIs() {
 
     const targetSub = document.getElementById('totalTargetSub');
     if (targetSub) {
-        targetSub.textContent = `المستهدف محسوب على ${distinctDays} ${distinctDays === 1 ? 'يوم' : 'أيام'}`;
+        targetSub.textContent = `Target calculated on ${distinctDays} ${distinctDays === 1 ? 'day' : 'days'}`;
     }
 
     // Update Shift Pills in Card 5 (Clean Pill Layout, No Text Wrapping)
@@ -866,7 +883,7 @@ function renderKPIs() {
         ].sort((a, b) => b.val - a.val);
         const best = shiftTotals[0];
         const bestPct = totalLen > 0 ? ((best.val / totalLen) * 100).toFixed(1) : 0;
-        shiftsSub.textContent = totalLen > 0 ? `${best.name} الأعلى (${bestPct}%)` : '-';
+        shiftsSub.textContent = totalLen > 0 ? `${best.name} (${bestPct}%) Highest` : '-';
     }
 
     // Family breakdown sub in Orders KPI
@@ -877,7 +894,7 @@ function renderKPIs() {
             if (r.familyid) fCount[r.familyid] = (fCount[r.familyid] || 0) + 1;
         });
         const topF = Object.entries(fCount).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `${k}: ${v}`).join(' | ');
-        ordersSub.textContent = topF || 'أوامر القسم';
+        ordersSub.textContent = topF || 'Department Orders';
     }
 }
 
@@ -1090,7 +1107,7 @@ function renderDetailTable() {
 
     const countBadge = document.getElementById('detailRecordCount');
     if (countBadge) {
-        countBadge.textContent = `${currentDetailData.length.toLocaleString()} أمر`;
+        countBadge.textContent = `${currentDetailData.length.toLocaleString()} Records`;
     }
 
     const pageSize = pageSizeVal === 'all' ? currentDetailData.length : parseInt(pageSizeVal, 10);
@@ -1131,14 +1148,14 @@ function renderDetailTable() {
 }
 
 function renderPagination(totalPages) {
-    const container = document.getElementById('paginationControls');
+    const container = document.getElementById('paginationControls') || document.getElementById('pagination');
     if (!container) return;
     container.innerHTML = '';
 
     if (totalPages <= 1) return;
 
     const prevBtn = document.createElement('button');
-    prevBtn.textContent = 'السابق';
+    prevBtn.textContent = 'Previous';
     prevBtn.disabled = currentPage === 1;
     prevBtn.onclick = () => { currentPage--; renderDetailTable(); };
     container.appendChild(prevBtn);
@@ -1156,7 +1173,7 @@ function renderPagination(totalPages) {
     }
 
     const nextBtn = document.createElement('button');
-    nextBtn.textContent = 'التالي';
+    nextBtn.textContent = 'Next';
     nextBtn.disabled = currentPage === totalPages;
     nextBtn.onclick = () => { currentPage++; renderDetailTable(); };
     container.appendChild(nextBtn);
@@ -1175,7 +1192,7 @@ function updateHeaderStats() {
     }
     const elMachLabel = document.getElementById('machinesCountLabel');
     if (elMachLabel) {
-        elMachLabel.textContent = showBunchers ? 'ماكينة (أساسية + بناشر)' : 'ماكينات أساسية';
+        elMachLabel.textContent = showBunchers ? 'Machines (Core + Bunchers)' : 'Core Machines';
     }
 }
 
@@ -1297,7 +1314,7 @@ function processDailyFile(file) {
 
     if (ext === 'csv') {
         if (typeof Papa === 'undefined') {
-            showToast('خطأ', 'مكتبة PapaParse غير متوفرة لقراءة CSV', '❌');
+            showToast('Error', 'PapaParse library is unavailable to parse CSV', '❌');
             return;
         }
         Papa.parse(file, {
@@ -1307,16 +1324,16 @@ function processDailyFile(file) {
                 if (results.data && results.data.length > 0) {
                     handleParsedRows(results.data, name);
                 } else {
-                    showToast('ملف فارغ', 'لم يتم العثور على أي صفوف في ملف CSV', '⚠️');
+                    showToast('Empty File', 'No rows found in CSV file', '⚠️');
                 }
             },
             error: function(err) {
-                showToast('خطأ في القراءة', err.message, '❌');
+                showToast('Read Error', err.message, '❌');
             }
         });
     } else if (ext === 'xlsx' || ext === 'xls') {
         if (typeof XLSX === 'undefined') {
-            showToast('خطأ', 'مكتبة SheetJS (XLSX) غير متوفرة لقراءة الإكسيل', '❌');
+            showToast('Error', 'SheetJS (XLSX) library is unavailable to parse Excel', '❌');
             return;
         }
         const reader = new FileReader();
@@ -1329,15 +1346,15 @@ function processDailyFile(file) {
                 if (rows && rows.length > 0) {
                     handleParsedRows(rows, name);
                 } else {
-                    showToast('ملف فارغ', 'لم يتم العثور على أي بيانات في الشيت الأول', '⚠️');
+                    showToast('Empty File', 'No data found in first sheet', '⚠️');
                 }
             } catch (err) {
-                showToast('خطأ في معالجة الإكسيل', err.message, '❌');
+                showToast('Excel Error', err.message, '❌');
             }
         };
         reader.readAsArrayBuffer(file);
     } else {
-        showToast('صيغة غير مدعومة', 'يرجى اختيار ملف بصيغة CSV أو Excel (.xlsx, .xls)', '⚠️');
+        showToast('Unsupported Format', 'Please upload a CSV or Excel (.xlsx, .xls) file', '⚠️');
     }
 }
 
@@ -1530,7 +1547,7 @@ function handleParsedRows(rows, fileName) {
 }
 
 function downloadUpdatedIndexHtml() {
-    showToast('جاري التجهيز', 'جاري إنشاء ملف index.html المدمج بالبيانات الجديدة...', '⏳');
+    showToast('Processing', 'Generating updated index.html with new production data...', '⏳');
 
     const exportable = rawData.map(r => ({
         id: r.id,
@@ -1608,7 +1625,7 @@ function downloadUpdatedMetalsJson() {
 
 function clearLocalImportedData() {
     localStorage.removeItem('metals_dashboard_local_imports');
-    showToast('تمت الاستعادة', 'تم مسح البيانات المضافة محلياً، جاري إعادة تحميل البيانات الأصلية...', '🔄');
+    showToast('Reset Done', 'Local imports cleared. Reloading dashboard...', '🔄');
     setTimeout(() => {
         loadData();
     }, 600);

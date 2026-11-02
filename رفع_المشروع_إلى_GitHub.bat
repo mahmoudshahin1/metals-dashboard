@@ -9,3 +9,4 @@ powershell -ExecutionPolicy Bypass -File "%~dp0push_to_github.ps1"
 echo.
 echo اضغط أي مفتاح للإغلاق...
 pause > nul
+

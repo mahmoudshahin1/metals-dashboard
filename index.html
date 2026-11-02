@@ -66,7 +66,7 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <span id="dateDisplayLabel">📅 السبت، 31 أكتوبر 2026 (31/10/2026)</span>
+                    <span id="dateDisplayLabel">📅 Sunday, November 1, 2026 (01/11/2026)</span>
                 </div>
                 <div class="header-stats">
                     <div class="mini-stat">
@@ -112,7 +112,7 @@
                         </svg>
                         Export PDF
                     </button>
-                    <button class="btn-print" onclick="window.print()" title="Print التقرير">
+                    <button class="btn-print" onclick="window.print()" title="Print Dashboard">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -133,7 +133,7 @@
             <div class="filter-group date-range-group">
                 <div class="date-header-inline">
                     <label>Production Period:</label>
-                    <span class="active-date-pill" id="activeDatePill">📅 السبت، 31 أكتوبر 2026</span>
+                    <span class="active-date-pill" id="activeDatePill">📅 Sunday, November 1, 2026</span>
                 </div>
                 <div class="date-range-inputs">
                     <div class="date-input-wrap">
@@ -175,8 +175,8 @@
             <div class="filter-group">
                 <label>Machine</label>
                 <select id="filterMachine" onchange="applyFilters()">
-                    <option value="all">جميع الماكينات المعروضة</option>
-                    <optgroup label="الماكينات الأساسية (10)">
+                    <option value="all">All Displayed Machines</option>
+                    <optgroup label="Core Machines (10)">
                         <option value="RS01">RS01</option>
                         <option value="RS02">RS02</option>
                         <option value="RS03">RS03</option>
@@ -188,7 +188,7 @@
                         <option value="DS01">DS01</option>
                         <option value="CN">CN</option>
                     </optgroup>
-                    <optgroup label="البناشر (BN: 5 ماكينات)">
+                    <optgroup label="Bunchers (BN: 5 Machines)">
                         <option value="BN01">BN01</option>
                         <option value="BN02">BN02</option>
                         <option value="BN06">BN06</option>
@@ -293,7 +293,7 @@
                                     id="kpiShift3Val">68k</strong></span>
                         </div>
                         <div class="kpi-label">Aggregated Shift Output (km)</div>
-                        <div class="kpi-sub" id="kpiShiftsSub">Shift 2 الأعلى (36.0%)</div>
+                        <div class="kpi-sub" id="kpiShiftsSub">Shift 2 (36.0%) Highest</div>
                     </div>
                 </div>
             </div>
@@ -314,7 +314,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h2>المجسم ثلاثي الأبعاد وتشريح الكابلات (3D Cable Structure &amp; Aggregates)</h2>
+                        <h2>3D Cable Structure &amp; Aggregates</h2>
                         <p class="section-subtitle">عرض تفاعلي ثلاثي الأبعاد 360° لمواصفات وتشريح كابلات القسم وتجميع
                             أطوالها وأوزانها المسجلة</p>
                     </div>
@@ -322,9 +322,9 @@
 
                 <div class="cable-3d-header-actions">
                     <button class="btn-3d-action active" id="btnToggleAutoRotate" onclick="toggleAutoRotate()"
-                        title="تشغيل / إيقاف الدوران التلقائي">
+                        title="Toggle Auto Rotation">
                         <span class="icon">⏸️</span>
-                        <span>دوران تلقائي</span>
+                        <span>Auto Rotate</span>
                     </button>
                     <div class="camera-views-group">
                         <button class="btn-3d-view" onclick="setCameraView('iso')" title="منظور ثلاثي الأبعاد مائل">🔄
@@ -334,12 +334,12 @@
                         <button class="btn-3d-view" onclick="setCameraView('side')" title="عرض جانبي مقشر للطبقات">🔍
                             عرض جانبي</button>
                         <button class="btn-3d-view" onclick="resetCamera()"
-                            title="Reset Filters الكاميرا وموقع الكابل">⟲ Reset Filters</button>
+                            title="Reset Camera &amp; Cable Position">⟲ Reset Camera</button>
                     </div>
                     <button class="btn-3d-action btn-fullscreen-toggle" id="btnToggleFullscreen"
-                        onclick="toggleFullscreen()" title="عرض ملء الشاشة للـ 3D">
+                        onclick="toggleFullscreen()" title="Toggle Fullscreen 3D View">
                         <span class="icon">⛶</span>
-                        <span>ملء الشاشة</span>
+                        <span>Fullscreen</span>
                     </button>
                 </div>
             </div>
@@ -350,13 +350,13 @@
                     <!-- Overlay Top Controls: Exploded view slider & status -->
                     <div class="viewport-overlay-top">
                         <div class="explode-control-wrap">
-                            <span class="explode-label">🔧 تفكيك وتقشير الطبقات (Exploded Cutaway):</span>
+                            <span class="explode-label">🔧 Exploded Cutaway Layers:</span>
                             <input type="range" id="explodeSlider" min="0" max="1" step="0.01" value="0"
                                 oninput="setExplodeProgress(this.value)">
                             <span class="explode-badge" id="explodeValueLabel">0%</span>
                         </div>
                         <div class="viewport-interaction-hint">
-                            <span>🖱️ اسحب للتدوير 360° • ⚲ بكرة الماوس للتقريب • مرر على أي طبقة لرؤية بياناتها</span>
+                            <span>🖱️ Drag to rotate 360° • ⚲ Scroll to zoom • Hover layers for anatomy breakdown</span>
                         </div>
                     </div>
 
@@ -368,31 +368,31 @@
 
                     <!-- Bottom Layers Legend (Clickable to inspect / highlight) -->
                     <div class="cable-3d-layers-legend">
-                        <div class="legend-title">طبقات الكابل الصناعي:</div>
+                        <div class="legend-title">Industrial Cable Layers:</div>
                         <button type="button" class="layer-pill" data-layer="conductor"
                             onclick="highlightLayerCard('conductor')">
                             <span class="layer-color-dot cond"></span>
-                            1. الموصلات (Conductor)
+                            1. Conductors (Conductor)
                         </button>
                         <button type="button" class="layer-pill" data-layer="insulation"
                             onclick="highlightLayerCard('insulation')">
                             <span class="layer-color-dot ins"></span>
-                            2. العازل (XLPE / PVC)
+                            2. Insulation (XLPE / PVC)
                         </button>
                         <button type="button" class="layer-pill" data-layer="bedding"
                             onclick="highlightLayerCard('bedding')">
                             <span class="layer-color-dot bed"></span>
-                            3. الحشوة والغلاف الداخلي (Bedding)
+                            3. Bedding &amp; Inner Sheath
                         </button>
                         <button type="button" class="layer-pill" data-layer="armour"
                             onclick="highlightLayerCard('armour')">
                             <span class="layer-color-dot arm"></span>
-                            4. التسليح (Steel Tape / Wire)
+                            4. Armour (Steel Tape / Wire)
                         </button>
                         <button type="button" class="layer-pill" data-layer="sheath"
                             onclick="highlightLayerCard('sheath')">
                             <span class="layer-color-dot sh"></span>
-                            5. الغلاف الخارجي (Outer Sheath)
+                            5. Outer Sheath (PVC/HDPE)
                         </button>
                     </div>
                 </div>
@@ -404,26 +404,26 @@
                         <div class="panel-card-header">
                             <div class="panel-title-wrap">
                                 <span class="panel-icon">📊</span>
-                                <h3>مجموع الكابلات في الداتا (الفترة المختارة)</h3>
+                                <h3>Aggregated Cable Totals (Selected Period)</h3>
                             </div>
                         </div>
 
                         <!-- 4 Mini Metric Cards -->
                         <div class="cable-metrics-grid">
                             <div class="cable-mini-stat">
-                                <span class="stat-lbl">إجمالي أطوال الكابلات</span>
+                                <span class="stat-lbl">Total Cable Length</span>
                                 <span class="stat-val primary" id="cable3dTotalLength">0 م</span>
                             </div>
                             <div class="cable-mini-stat">
-                                <span class="stat-lbl">إجمالي وزن الكابلات</span>
+                                <span class="stat-lbl">Total Cable Weight</span>
                                 <span class="stat-val" id="cable3dTotalWeight">0 طن</span>
                             </div>
                             <div class="cable-mini-stat">
-                                <span class="stat-lbl">أوامر تشغيل الكابلات</span>
+                                <span class="stat-lbl">Total Work Orders</span>
                                 <span class="stat-val" id="cable3dTotalOrders">0 أمر</span>
                             </div>
                             <div class="cable-mini-stat">
-                                <span class="stat-lbl">متوسط طول الطبلة/البكرة</span>
+                                <span class="stat-lbl">Avg Drum/Reel Length</span>
                                 <span class="stat-val" id="cable3dDrumAvg">0 م</span>
                             </div>
                         </div>
@@ -431,7 +431,7 @@
                         <!-- Conductor Share (CU vs AL) -->
                         <div class="conductor-split-section">
                             <div class="split-header">
-                                <span class="split-title">توزيع خامة الموصل (Conductor Split):</span>
+                                <span class="split-title">Conductor Material Split:</span>
                             </div>
                             <div class="split-bar-container">
                                 <div class="split-bar-cu" id="cable3dBarCU" style="width: 50%;"></div>
@@ -446,7 +446,7 @@
                         <!-- Family Breakdown Chips -->
                         <div class="families-chips-section">
                             <div class="split-header">
-                                <span class="split-title">عائلات الكابلات المصنعة:</span>
+                                <span class="split-title">Manufactured Cable Families:</span>
                             </div>
                             <div class="family-pills-wrap">
                                 <span class="fam-pill lv" id="cableFamLV"><strong>LV</strong> 0 م</span>
@@ -463,21 +463,21 @@
                         <div class="panel-card-header">
                             <div class="panel-title-wrap">
                                 <span class="panel-icon">🔍</span>
-                                <h3>اختيار واستعراض الكابل المعروض في 3D</h3>
+                                <h3>Select &amp; Inspect Cable in 3D</h3>
                             </div>
                         </div>
 
                         <div class="cable-selector-dropdown-wrap">
-                            <label for="cable3dSelectProduct">اختر كابل محدد من أوامر التشغيل:</label>
+                            <label for="cable3dSelectProduct">Select Cable from Work Orders:</label>
                             <select id="cable3dSelectProduct" class="cable-select-input"
                                 onchange="handleCableSelectChange()">
-                                <option value="aggregate">🌟 كابل مجموع الإنتاج الإجمالي (Combined Aggregate)</option>
+                                <option value="aggregate">🌟 Combined Aggregate Cable (All Specs)</option>
                             </select>
                         </div>
 
                         <!-- Top 5 Produced Cables Fast Selector -->
                         <div class="top-cables-wrap">
-                            <div class="top-cables-title">أعلى الكابلات إنتاجاً في الفترة المختارة:</div>
+                            <div class="top-cables-title">Top Produced Cables in Selected Period:</div>
                             <div class="top-cables-list" id="cable3dTopCablesList">
                                 <!-- Dynamically generated -->
                             </div>
@@ -489,33 +489,33 @@
                         <div class="panel-card-header">
                             <div class="panel-title-wrap">
                                 <span class="panel-icon">⚡</span>
-                                <h3 id="activeSpecTitle">كابل الإنتاج</h3>
+                                <h3 id="activeSpecTitle">Cable Specification</h3>
                             </div>
                         </div>
                         <div class="spec-rows-grid">
                             <div class="spec-row">
-                                <span class="spec-k">الجهد الاسمي:</span>
+                                <span class="spec-k">Voltage Rating:</span>
                                 <span class="spec-v" id="activeSpecVoltage">0.6/1 KV</span>
                             </div>
                             <div class="spec-row">
-                                <span class="spec-k">الموصل والقلوب:</span>
+                                <span class="spec-k">Conductor &amp; Cores:</span>
                                 <span class="spec-v" id="activeSpecConductor">4 قلب × 70 mm² (AL)</span>
                             </div>
                             <div class="spec-row">
-                                <span class="spec-k">نوع العازل:</span>
+                                <span class="spec-k">Insulation Type:</span>
                                 <span class="spec-v" id="activeSpecInsulation">XLPE عالي المتانة</span>
                             </div>
                             <div class="spec-row">
-                                <span class="spec-k">التسليح (Armour):</span>
+                                <span class="spec-k">Armour Type:</span>
                                 <span class="spec-v" id="activeSpecArmour">شريط صلب مجلفن (STA)</span>
                             </div>
                             <div class="spec-row">
-                                <span class="spec-k">الغلاف الخارجي:</span>
+                                <span class="spec-k">Outer Sheath:</span>
                                 <span class="spec-v" id="activeSpecSheath">PVC أسود مقاوم للأشعة UV</span>
                             </div>
                         </div>
                         <div class="spec-produced-badge" id="activeSpecProduced">
-                            إجمالي إنتاج الكابلات في الفترة: 0 متر
+                            Total cable production in period: 0 m
                         </div>
                     </div>
                 </div>
@@ -591,7 +591,7 @@
                         <polyline points="10 9 9 9 8 9"></polyline>
                     </svg>
                     Detailed Production Orders Log
-                    <span class="detail-count-badge" id="detailRecordCount">68 أمر</span>
+                    <span class="detail-count-badge" id="detailRecordCount">66 Records</span>
                 </h2>
             </div>
             <div class="detail-table-container">
@@ -600,7 +600,7 @@
                     <div class="filter-group-inline">
                         <label>Family ID:</label>
                         <select id="detailFilterFamily" onchange="renderDetailTable()">
-                            <option value="all">جميع Family IDs</option>
+                            <option value="all">All Family IDs</option>
                             <option value="BC">BC</option>
                             <option value="CC">CC</option>
                             <option value="IC">IC</option>
@@ -609,10 +609,10 @@
                         </select>
                     </div>
                     <div class="filter-group-inline">
-                        <label>الماكينة:</label>
+                        <label>Machine:</label>
                         <select id="detailFilterMachine" onchange="renderDetailTable()">
-                            <option value="all">جميع الماكينات</option>
-                            <optgroup label="الماكينات الأساسية (10)">
+                            <option value="all">All Machines</option>
+                            <optgroup label="Core Machines (10)">
                                 <option value="RS01">RS01</option>
                                 <option value="RS02">RS02</option>
                                 <option value="RS03">RS03</option>
@@ -624,7 +624,7 @@
                                 <option value="DS01">DS01</option>
                                 <option value="CN">CN</option>
                             </optgroup>
-                            <optgroup label="البناشر (BN)">
+                            <optgroup label="Bunchers (BN)">
                                 <option value="BN01">BN01</option>
                                 <option value="BN02">BN02</option>
                                 <option value="BN06">BN06</option>
@@ -634,7 +634,7 @@
                         </select>
                     </div>
                     <div class="filter-group-inline">
-                        <label>الشفت:</label>
+                        <label>Shift:</label>
                         <select id="detailFilterShift" onchange="renderDetailTable()">
                             <option value="all">All Shifts</option>
                             <option value="1">1</option>
@@ -643,7 +643,7 @@
                         </select>
                     </div>
                     <div class="filter-group-inline">
-                        <label>المادة:</label>
+                        <label>Material:</label>
                         <select id="detailFilterMaterial" onchange="renderDetailTable()">
                             <option value="all">All Materials</option>
                             <option value="AL">AL</option>
@@ -651,7 +651,7 @@
                         </select>
                     </div>
                     <div class="filter-group-inline">
-                        <label>عرض:</label>
+                        <label>Show:</label>
                         <select id="detailPageSize" onchange="renderDetailTable()">
                             <option value="25">25 rows</option>
                             <option value="50">50 rows</option>
@@ -713,7 +713,7 @@
         </div>
     </div>
     <!-- Toast Notification -->
-    <div id="toastNotification" class="toast-notification">
+    <div id="toastNotification" class="toast-notification hidden">
         <div class="toast-icon" id="toastIcon">⏳</div>
         <div class="toast-body">
             <div class="toast-title" id="toastTitle">Processing</div>
