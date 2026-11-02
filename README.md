@@ -1,15 +1,37 @@
-# داشبورد إنتاجية قسم المعادن 📊
+# Metals Department Productivity Dashboard 📊
 
-لوحة تحكم تفاعلية متقدمة لمتابعة إنتاجية ماكينات قسم المعادن (10 ماكينات)، وحساب معدلات الأداء المعيارية والمرجحة (Performance %)، وتوزيع الإنتاج حسب الشفتات والخامات (ألومنيوم ونحاس).
-
-## 🚀 رابط المعاينة المباشر:
-👉 [https://mahmoudshahin1.github.io/metals-dashboard/](https://mahmoudshahin1.github.io/metals-dashboard/)
+An advanced, interactive productivity dashboard for tracking the 10 production machines of the Metals Department, measuring output performance (m & km/day), and monitoring shifts (S1, S2, S3) and materials (Aluminum & Copper).
 
 ---
 
-## 🛠 الميزات الرئيسية:
-- **تتبع يومي شامل:** فلترة سهلة حسب التاريخ، الماكينة، والوردية.
-- **حساب الأداء المرجح (Weighted Performance):** مراعاة تغير المقاسات واختلاف معدلات الإنتاج القياسية (Target Rate) لكل مقاس وخامة.
-- **إحصائيات متقدمة للشفتات (S1, S2, S3):** مقارنة أداء الورديات بالأمتار والوزن.
-- **توزيع الخامات:** تحليل دقيق لخامتي الألومنيوم والنحاس.
-- **تصدير التقارير:** تصدير مباشر إلى Excel و PDF و CSV.
+## ⚡ Main Machine Table Columns
+The primary machine productivity view displays columns in this exact order:
+```
+Machine | W.O | Cable Size | Conductor | Target/day | Shift 1 | Shift 2 | Shift 3 | Production km/day | Cable Type
+```
+
+* **Machine:** 10 core department machines (`RS01`–`RS06`, `CS01`, `CS02`, `DS01`, `CN`).
+* **W.O:** Active work orders executed on the machine.
+* **Cable Size:** Conductor cross-section(s) (e.g. `240`, `400`, `120`, `35`).
+* **Conductor:** Conductor metal (`AL` for Aluminum, `CU` for Copper).
+* **Target/day:** Standard planned production rate in km/day.
+* **Shift 1 / 2 / 3:** Output per shift in km.
+* **Production km/day:** Total aggregated daily output in **km/day**.
+* **Cable Type:** Cable category (`LV`, `MV`, `HV`).
+
+---
+
+## 📁 Data Source & Drag & Drop Support
+All dashboard data relies **exclusively** on the daily production sheet exported in `Cable_Production_Records` format.
+
+### Updating via Drag & Drop:
+1. Open [`index.html`](file:///C:/Users/mahmoud.mohamed/Desktop/METAL/index.html) in your browser.
+2. Drag and drop any `Cable_Production_Records_*.csv` file onto the window.
+3. The dashboard immediately processes the file and updates all views, persisting data locally.
+
+### Updating via Script:
+```bash
+python update_daily_data.py Cable_Production_Records_YYYY-MM-DD.csv
+```
+
+Detailed instructions and column specifications are documented in [INSTRUCTIONS.md](file:///C:/Users/mahmoud.mohamed/Desktop/METAL/INSTRUCTIONS.md).
