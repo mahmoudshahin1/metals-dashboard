@@ -535,6 +535,392 @@ def embed_data_in_html(combined, html_path='index.html'):
 
     print(f"📄 تم تحديث وتضمين كافة البيانات مباشرة داخل ملف {html_path} ({len(combined)} سجل)!")
 
+
+# ===== دالة التوليد الثابت للواجهة والجدول في index.html لضمان العرض الفوري بنفس التنسيق والألوان =====
+PRERENDER_OPERATOR_ARABIC_MAP = {
+    'Ahmed Samy': 'أحمد سامي',
+    'Mohamed hussein S': 'محمد حسين',
+    'Mahmoud Mohamed Ahmed': 'محمود محمد أحمد',
+    'Amr Ehab Fawzy': 'عمرو إيهاب فوزي',
+    'Mohamed abdellatif Syam': 'محمد عبد اللطيف صيام',
+    'mohamed Nasef': 'محمد ناصف'
+}
+
+def prerender_normalize_op(name):
+    if not name: return ''
+    trimmed = str(name).strip()
+    return PRERENDER_OPERATOR_ARABIC_MAP.get(trimmed, trimmed)
+
+def prerender_short_op(name):
+    if not name: return ''
+    norm = prerender_normalize_op(name)
+    parts = re.split(r'\s+', norm.strip())
+    if len(parts) > 2:
+        if parts[1] == 'عبد' and len(parts) >= 3:
+            return ' '.join(parts[:3])
+        return ' '.join(parts[:2])
+    return norm.strip()
+
+def prerender_family_class(family_id):
+    f = str(family_id or '').upper().strip()
+    if 'MV' in f: return 'mv'
+    if 'LV' in f: return 'lv'
+    if 'HV' in f: return 'hv'
+    return 'other'
+
+PRERENDER_VOLT_NAMES = {
+    'LV': 'Low Voltage',
+    'MV': 'Medium Voltage',
+    'HV': 'High Voltage',
+    'CC': 'Control Cables',
+    'BC': 'Building Cables',
+    'BARE': 'Bare Conductor',
+    'SOLID': 'Solid Conductor'
+}
+
+def prerender_index_html(html_path='index.html', json_path='metals_data.json', volt_path='wo_voltage.js'):
+    if not os.path.exists(html_path) or not os.path.exists(json_path):
+        return
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        records = json.load(f)
+
+    wo_voltage_map = {}
+    if os.path.exists(volt_path):
+        with open(volt_path, 'r', encoding='utf-8') as f:
+            volt_js = f.read()
+        m = re.search(r'var WO_VOLTAGE_MAP\s*=\s*(\{[\s\S]*?\});', volt_js)
+        if m:
+            wo_voltage_map = json.loads(m.group(1))
+
+    valid_dates = sorted(list(set(r.get('dateIso') for r in records if r.get('dateIso'))))
+    latest_day = valid_dates[-1] if valid_dates else '2026-11-05'
+
+    day_rows = [r for r in records if r.get('dateIso') == latest_day]
+    machines = ['RS01', 'RS02', 'RS03', 'RS04', 'RS05', 'RS06', 'CS01', 'CS02', 'DS01', 'CN']
+
+    sum_s1 = 0
+    sum_s2 = 0
+    sum_s3 = 0
+    sum_total_len = 0
+    all_wos_set = set()
+    all_sizes_set = set()
+    all_volt_by_wo = {}
+
+    rows_html = []
+
+    for m_name in machines:
+        m_rows = [r for r in day_rows if r.get('machine') == m_name]
+        m_rows_s1 = [r for r in m_rows if str(r.get('shift')) == '1']
+        m_rows_s2 = [r for r in m_rows if str(r.get('shift')) == '2']
+        m_rows_s3 = [r for r in m_rows if str(r.get('shift')) == '3']
+
+        s1 = sum(r.get('length', 0) for r in m_rows_s1)
+        s2 = sum(r.get('length', 0) for r in m_rows_s2)
+        s3 = sum(r.get('length', 0) for r in m_rows_s3)
+        total_len = s1 + s2 + s3
+
+        sum_s1 += s1
+        sum_s2 += s2
+        sum_s3 += s3
+        sum_total_len += total_len
+
+        machine_cell = f'''            <td style="text-align: center; vertical-align: middle;">
+                <span class="machine-name">{m_name}</span>
+            </td>'''
+
+        shift_rows_list = [m_rows_s1, m_rows_s2, m_rows_s3]
+        op_rows_html = []
+        for i, rows in enumerate(shift_rows_list):
+            shift_no = i + 1
+            by_op = {}
+            for r in rows:
+                op = prerender_normalize_op(r.get('operator'))
+                if op:
+                    by_op[op] = by_op.get(op, 0) + (r.get('length') or 0)
+            ops = sorted(by_op.keys(), key=lambda x: by_op[x], reverse=True)
+            if ops:
+                name_html = '<span class="op-sep">/</span>'.join(
+                    f'<span class="op-name" title="{op}">{prerender_short_op(op)}</span>' for op in ops
+                )
+                full_title = ' / '.join(ops)
+            else:
+                name_html = '<span class="op-empty">—</span>'
+                full_title = 'No operator'
+
+            op_rows_html.append(f'''            <div class="operator-v-row" title="Shift {shift_no}: {full_title}">
+                <span class="shift-badge shift-s{shift_no} op-shift-badge">S{shift_no}</span>
+                <div class="op-names">{name_html}</div>
+            </div>''')
+
+        operators_cell = f'''        <td style="text-align: center; vertical-align: middle;">
+            <div class="operator-v-stack">
+{chr(10).join(op_rows_html)}</div>
+        </td>'''
+
+        machine_orders = []
+        seen_wos = set()
+        for r in m_rows:
+            wo = str(r.get('workorder') or '').strip()
+            if not wo or wo in seen_wos:
+                continue
+            seen_wos.add(wo)
+            wo_rows = [row for row in m_rows if str(row.get('workorder') or '').strip() == wo]
+            sizes = list(dict.fromkeys(row.get('size') for row in wo_rows if row.get('size')))
+            size_str = ', '.join(sizes) if sizes else '-'
+            is_cu = any(row.get('material') == 'CU' for row in wo_rows)
+            mat = 'CU' if is_cu else 'AL'
+            fams = list(dict.fromkeys(row.get('familyid') for row in wo_rows if row.get('familyid')))
+            wo_meters = sum(row.get('length', 0) for row in wo_rows)
+
+            plan_code = wo_voltage_map.get(wo)
+            if plan_code:
+                volt = {
+                    'code': plan_code,
+                    'cls': prerender_family_class(plan_code),
+                    'from_plan': True,
+                    'title': f"Master Plan: {PRERENDER_VOLT_NAMES.get(plan_code, plan_code)}"
+                }
+            else:
+                fb = fams[0] if fams else '-'
+                volt = {
+                    'code': fb,
+                    'cls': prerender_family_class(fb),
+                    'from_plan': False,
+                    'title': 'Not found in Master Plan (using production data family)'
+                }
+
+            raw_sizes = list(dict.fromkeys(str(row.get('raw_size') or row.get('rawSize') or row.get('size') or '') for row in wo_rows if row.get('raw_size') or row.get('rawSize') or row.get('size')))
+            raw_sizes_str = ', '.join(raw_sizes)
+
+            machine_orders.append({
+                'workorder': wo,
+                'volt': volt,
+                'size': size_str,
+                'rawSize': raw_sizes_str,
+                'sizes': sizes,
+                'material': mat,
+                'isCu': is_cu,
+                'families': fams,
+                'meters': wo_meters
+            })
+
+            all_wos_set.add(wo)
+            all_volt_by_wo[wo] = volt['code']
+            for sz in sizes:
+                all_sizes_set.add(sz)
+
+        if machine_orders:
+            wo_rows_html = [f'''                <div class="order-v-row" data-machine="{m_name}" data-idx="{idx}">
+                    <span class="wo-pill" title="Work Order: {ord_item['workorder']}">
+                        {ord_item['workorder']}
+                    </span>
+                </div>''' for idx, ord_item in enumerate(machine_orders)]
+
+            qt_rows_html = [f'''                <div class="order-v-row" data-machine="{m_name}" data-idx="{idx}">
+                    <span class="wo-len-km" title="Work Order: {ord_item['workorder']} | {round(ord_item['meters']):,} m">{round(ord_item['meters']):,} m</span>
+                </div>''' for idx, ord_item in enumerate(machine_orders)]
+
+            volt_rows_html = [f'''                <div class="family-v-row" data-machine="{m_name}" data-idx="{idx}">
+                    <span class="family-badge {ord_item['volt']['cls']}" title="Work Order: {ord_item['workorder']} | {ord_item['volt']['title']}">{ord_item['volt']['code']}</span>
+                </div>''' for idx, ord_item in enumerate(machine_orders)]
+
+            size_rows_html = []
+            for idx, ord_item in enumerate(machine_orders):
+                recorded_tip = f" | Recorded: {ord_item['rawSize']}" if (ord_item['rawSize'] and ord_item['rawSize'] != ord_item['size']) else ""
+                tag_cls = "cu" if ord_item['isCu'] else "al"
+                size_rows_html.append(f'''                <div class="size-v-row" data-machine="{m_name}" data-idx="{idx}">
+                    <span class="size-num-tag {tag_cls}" title="Work Order: {ord_item['workorder']} | Size: {ord_item['size']} mm² ({ord_item['material']}){recorded_tip}">
+                        {ord_item['size']} <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>''')
+
+            cond_rows_html = [f'''                <div class="conductor-v-row" data-machine="{m_name}" data-idx="{idx}">
+                    <span class="material-tag {'material-copper' if ord_item['isCu'] else 'material-aluminum'}" title="Conductor: {ord_item['material']}">
+                        {ord_item['material']}
+                    </span>
+                </div>''' for idx, ord_item in enumerate(machine_orders)]
+
+            wo_cell = f'''            <td style="text-align: center; vertical-align: middle;">
+                <div class="order-v-stack">
+{chr(10).join(wo_rows_html)}</div>
+            </td>'''
+
+            qt_cell = f'''            <td style="text-align: center; vertical-align: middle;">
+                <div class="order-v-stack">
+{chr(10).join(qt_rows_html)}</div>
+            </td>'''
+
+            volt_cell = f'''            <td style="text-align: center; vertical-align: middle;">
+                <div class="family-v-stack">
+{chr(10).join(volt_rows_html)}</div>
+            </td>'''
+
+            size_cell = f'''            <td style="text-align: center; vertical-align: middle;">
+                <div class="size-v-stack">
+{chr(10).join(size_rows_html)}
+            </div>
+            </td>'''
+
+            conductor_cell = f'''            <td style="text-align: center; vertical-align: middle;">
+                <div class="conductor-v-stack">
+{chr(10).join(cond_rows_html)}
+            </div>
+            </td>'''
+        else:
+            wo_cell = '<td style="text-align: center; vertical-align: middle;"><span style="color:#94a3b8; font-weight:700;">—</span></td>'
+            qt_cell = '<td style="text-align: center; vertical-align: middle;"><span style="color:#94a3b8; font-weight:700;">—</span></td>'
+            volt_cell = '<td style="text-align: center; vertical-align: middle;"><span style="color:#94a3b8; font-weight:700;">—</span></td>'
+            size_cell = '<td style="text-align: center; vertical-align: middle;"><span style="color:#94a3b8; font-weight:700;">—</span></td>'
+            conductor_cell = '<td style="text-align: center; vertical-align: middle;"><span style="color:#94a3b8; font-weight:700;">—</span></td>'
+
+        def format_shift_m(meters):
+            if meters <= 0:
+                return '<span style="color:#cbd5e1">-</span>'
+            return f'''<div class="shift-cell-wrapper" title="{meters / 1000:.2f} km">
+                    <span class="num" style="font-weight:700;">{round(meters):,}</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div>'''
+
+        shift1_cell = f'<td style="text-align: center; vertical-align: middle;">{format_shift_m(s1)}</td>'
+        shift2_cell = f'<td style="text-align: center; vertical-align: middle;">{format_shift_m(s2)}</td>'
+        shift3_cell = f'<td style="text-align: center; vertical-align: middle;">{format_shift_m(s3)}</td>'
+
+        # Half-up rounding to match JS toFixed(2)
+        prod_km = int((total_len / 1000.0) * 100.0 + 0.5) / 100.0
+        prod_km_cell = f'''            <td style="text-align: center; vertical-align: middle;" title="{round(total_len):,} m">
+                <span class="num prod-km-value">{prod_km:.2f}</span>
+                <span class="prod-km-unit">km/day</span>
+            </td>'''
+
+        tr = f'''<tr class="highlight-row">
+{machine_cell}
+{operators_cell}
+{wo_cell}
+{qt_cell}
+{volt_cell}
+{size_cell}
+{conductor_cell}
+{shift1_cell}
+{shift2_cell}
+{shift3_cell}
+{prod_km_cell}
+        </tr>'''
+        rows_html.append(tr)
+
+    # Total summary row
+    vals = list(all_volt_by_wo.values())
+    lv_cnt = vals.count('LV')
+    mv_cnt = vals.count('MV')
+    volt_summary_str = f"LV {lv_cnt} · MV {mv_cnt}"
+
+    total_km = int((sum_total_len / 1000.0) * 100.0 + 0.5) / 100.0
+    total_tr = f'''<tr class="total-summary-row">
+        <td style="text-align: center; color: var(--accent-blue); font-size: 1.02rem; font-weight: 900;">
+            Total
+        </td>
+        <td style="text-align: center;"></td>
+        <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
+            {len(all_wos_set)} Orders
+        </td>
+        <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
+            {total_km:.2f} km
+        </td>
+        <td style="text-align: center; font-size: 0.8rem; color: #1e3a8a; font-weight: 800; white-space: nowrap;">
+            {volt_summary_str}
+        </td>
+        <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
+            {len(all_sizes_set)} Sizes
+        </td>
+        <td style="text-align: center;">
+            <span class="material-tag material-copper">CU</span>
+            <span class="material-tag material-aluminum">AL</span>
+        </td>
+        <td style="text-align: center;">
+            <span class="num font-bold" style="color:#1e3a8a;">{round(sum_s1):,} m</span>
+        </td>
+        <td style="text-align: center;">
+            <span class="num font-bold" style="color:#1e3a8a;">{round(sum_s2):,} m</span>
+        </td>
+        <td style="text-align: center;">
+            <span class="num font-bold" style="color:#1e3a8a;">{round(sum_s3):,} m</span>
+        </td>
+        <td style="text-align: center;">
+            <span class="num" style="font-size: 1.15rem; color: #1e3a8a; font-weight: 900;">
+                {total_km:.2f} km/day
+            </span>
+        </td>
+    </tr>'''
+    rows_html.append(total_tr)
+
+    new_tbody_content = '\n'.join(rows_html)
+
+    # Calculate KPIs
+    total_len_rounded = round(sum_total_len)
+    total_target = 326000
+    overall_perf = (sum_total_len / total_target * 100.0) if total_target > 0 else 0.0
+    total_orders_kpi = len(day_rows)
+
+    s1_k = round(sum_s1 / 1000.0)
+    s2_k = round(sum_s2 / 1000.0)
+    s3_k = round(sum_s3 / 1000.0)
+
+    shifts_pct = [
+        ('Shift 1', sum_s1 / sum_total_len * 100.0 if sum_total_len else 0),
+        ('Shift 2', sum_s2 / sum_total_len * 100.0 if sum_total_len else 0),
+        ('Shift 3', sum_s3 / sum_total_len * 100.0 if sum_total_len else 0)
+    ]
+    shifts_pct.sort(key=lambda x: x[1], reverse=True)
+    highest_shift_text = f"{shifts_pct[0][0]} ({shifts_pct[0][1]:.1f}%) Highest"
+
+    perf_color = 'var(--accent-green)' if overall_perf >= 85 else ('var(--accent-cyan)' if overall_perf >= 60 else 'var(--accent-orange)')
+    perf_rating_text = 'Rating: Excellent' if overall_perf >= 95 else ('Rating: Very Good' if overall_perf >= 85 else ('Rating: Good' if overall_perf >= 70 else ('Rating: Acceptable' if overall_perf >= 60 else 'Rating: Under Target')))
+
+    dt_obj = datetime.datetime.strptime(latest_day, '%Y-%m-%d')
+    days_en = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    months_en = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    formatted_date_en = f"{days_en[dt_obj.weekday()]}, {months_en[dt_obj.month - 1]} {dt_obj.day}, {dt_obj.year}"
+    date_badge_str = f"📅 {formatted_date_en} ({dt_obj.strftime('%d/%m/%Y')})"
+
+    with open(html_path, 'r', encoding='utf-8') as f:
+        html = f.read()
+
+    # Update Title and Subtitle to match the clean design
+    html = re.sub(r'<h1>[\s\S]*?</h1>', '<h1>Productivity Dashboard</h1>', html, count=1)
+    html = re.sub(r'<p class="header-subtitle">[\s\S]*?</p>', '<p class="header-subtitle">Daily Production &amp; Performance Tracking System</p>', html, count=1)
+
+    # Clean Import Daily Sheet button text (remove emoji if present)
+    html = re.sub(r'(<button class="btn-import"[^>]*>[\s\S]*?<line x1="12" y1="3" x2="12" y2="15"></line>\s*</svg>\s*)(?:📥\s*)?Import Daily Sheet', r'\1Import Daily Sheet', html)
+
+    # Update KPI values
+    html = re.sub(r'(<div class="kpi-value" id="totalLength">)[^<]*(</div>)', rf'\g<1>{total_len_rounded:,}\g<2>', html)
+    html = re.sub(r'(<div class="kpi-value" id="totalTarget">)[^<]*(</div>)', rf'\g<1>{total_target:,}\g<2>', html)
+    html = re.sub(r'(<div class="kpi-sub" id="totalTargetSub">)[^<]*(</div>)', r'\g<1>Target calculated on 1 day\g<2>', html)
+    html = re.sub(r'<div class="kpi-value" id="deptPerformance"[^>]*>[^<]*</div>', f'<div class="kpi-value" id="deptPerformance" style="color: {perf_color};">{overall_perf:.1f}%</div>', html)
+    html = re.sub(r'(<div class="kpi-sub" id="deptPerfLabel">)[^<]*(</div>)', rf'\g<1>{perf_rating_text}\g<2>', html)
+    html = re.sub(r'(<div class="kpi-value" id="totalOrdersKPI">)[^<]*(</div>)', rf'\g<1>{total_orders_kpi}\g<2>', html)
+    html = re.sub(r'(<div class="kpi-sub" id="ordersBreakdownSub">)[^<]*(</div>)', rf'\g<1>LV: {total_orders_kpi}\g<2>', html)
+
+    html = re.sub(r'(<strong id="kpiShift1Val">)[^<]*(</strong>)', rf'\g<1>{s1_k}k\g<2>', html)
+    html = re.sub(r'(<strong id="kpiShift2Val">)[^<]*(</strong>)', rf'\g<1>{s2_k}k\g<2>', html)
+    html = re.sub(r'(<strong id="kpiShift3Val">)[^<]*(</strong>)', rf'\g<1>{s3_k}k\g<2>', html)
+    html = re.sub(r'(<div class="kpi-sub" id="kpiShiftsSub">)[^<]*(</div>)', rf'\g<1>{highest_shift_text}\g<2>', html)
+
+    html = re.sub(r'(<span id="dateDisplayLabel">)[^<]*(</span>)', rf'\g<1>{date_badge_str}\g<2>', html)
+    html = re.sub(r'(<span class="active-date-pill" id="activeDatePill">)[^<]*(</span>)', rf'\g<1>📅 {formatted_date_en}\g<2>', html)
+    html = re.sub(r'(<p class="section-subtitle" id="reportDateTitle">)[^<]*(</p>)', rf'\g<1>Daily Production Report: {formatted_date_en} | Target calculated on 1 day\g<2>', html)
+    html = re.sub(r'(<span class="mini-stat-value" id="totalRecords">)[^<]*(</span>)', rf'\g<1>{total_orders_kpi}\g<2>', html)
+    html = re.sub(r'(<input type="date" id="filterDateFrom"[^>]*value=")[^"]*(")', rf'\g<1>{latest_day}\g<2>', html)
+    html = re.sub(r'(<input type="date" id="filterDateTo"[^>]*value=")[^"]*(")', rf'\g<1>{latest_day}\g<2>', html)
+
+    # Replace tbody
+    html = re.sub(r'<tbody id="machineShiftBody">[\s\S]*?</tbody>', f'<tbody id="machineShiftBody">\n{new_tbody_content}\n</tbody>', html)
+
+    with open(html_path, 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"🎨 تم التوليد الثابت للواجهة والجدول في {html_path} لتاريخ {latest_day} بنجاح!")
+
+
 def update_html_cache_buster(html_path='index.html'):
     if not os.path.exists(html_path):
         return
@@ -582,14 +968,27 @@ def update_html_cache_buster(html_path='index.html'):
     print(f"🚀 تم تحديث كاش المتصفح في {html_path} إلى الإصدار: {new_version}")
 
 def git_commit_and_push():
+    import shutil
+    desktop_repo = r'C:\Users\mahmoud.mohamed\Desktop\METAL'
+    target_git_dir = desktop_repo if (os.path.exists(desktop_repo) and os.path.exists(os.path.join(desktop_repo, '.git'))) else None
+
+    # Sync files to desktop repo if needed
+    if target_git_dir and os.path.abspath(target_git_dir).lower() != os.path.abspath('.').lower():
+        sync_files = ['index.html', 'styles.css', 'app.js', 'metals_data.json', 'metals_data.js', 'wo_voltage.js', 'config.js', 'cable3d.js', 'update_daily_data.py']
+        for f in sync_files:
+            if os.path.exists(f):
+                shutil.copy2(f, os.path.join(target_git_dir, f))
+        print(f"📋 تم نسخ الملفات المحدثة إلى مجلد Git المحلي: {target_git_dir}")
+
     try:
         print("\n🌐 جاري الرفع إلى GitHub...")
-        subprocess.run(['git', 'add', '-A'], check=True)
+        cwd = target_git_dir if target_git_dir else None
+        subprocess.run(['git', 'add', '-A'], cwd=cwd, check=True)
         commit_msg = f"Update metals daily data - {datetime.date.today().isoformat()}"
-        subprocess.run(['git', 'commit', '-m', commit_msg], check=True)
-        subprocess.run(['git', '-c', 'http.version=HTTP/1.1', 'push', 'origin', 'main'], check=True)
+        subprocess.run(['git', 'commit', '-m', commit_msg], cwd=cwd, check=True)
+        subprocess.run(['git', '-c', 'http.version=HTTP/1.1', 'push', 'origin', 'main'], cwd=cwd, check=True)
         print("🎉 تم الرفع بنجاح إلى GitHub Pages!")
-        print("🔗 الرابط المباشر: https://aefawzy17-dot.github.io/METAL/")
+        print("🔗 الرابط المباشر: https://mahmoudshahin1.github.io/metals-dashboard/")
     except Exception as e:
         print(f"⚠️ تنبيه: تعذر الرفع المباشر عبر الأوامر (Git): {e}")
         print("💡 يمكنك رفع التغييرات يدوياً أو مراجعة الاتصال.")
@@ -634,6 +1033,7 @@ def main():
         print(f"⚠️ تعذر تحديث الماستر بلان: {e}")
 
     update_html_cache_buster()
+    prerender_index_html()
 
     if auto_push:
         git_commit_and_push()
