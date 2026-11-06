@@ -11,7 +11,7 @@
     <script src="html2pdf.bundle.min.js"></script>
     <script src="three.bundle.min.js"></script>
     <script>
-        const BUILD_VERSION = '20261106_111255';
+        const BUILD_VERSION = '20261106_120849';
         if (window.location.protocol !== 'file:') {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('v') !== BUILD_VERSION) {
@@ -20,7 +20,7 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20261104_091700">
+    <link rel="stylesheet" href="styles.css?v=20261106_120849">
 </head>
 
 <body>
@@ -43,7 +43,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1>Metals Department Productivity Dashboard</h1>
+                    <h1>Productivity Dashboard</h1>
                     <p class="header-subtitle">Daily Production &amp; Performance Tracking System</p>
                 </div>
             </div>
@@ -59,11 +59,11 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <span id="dateDisplayLabel">📅 Wednesday, November 4, 2026 (04/11/2026)</span>
+                    <span id="dateDisplayLabel">📅 Thursday, November 5, 2026 (05/11/2026)</span>
                 </div>
                 <div class="header-stats">
                     <div class="mini-stat">
-                        <span class="mini-stat-value" id="totalRecords">74</span>
+                        <span class="mini-stat-value" id="totalRecords">85</span>
                         <span class="mini-stat-label">Production Records</span>
                     </div>
                     <div class="mini-stat">
@@ -78,7 +78,7 @@
                             <polyline points="17 8 12 3 7 8"></polyline>
                             <line x1="12" y1="3" x2="12" y2="15"></line>
                         </svg>
-                        📥 Import Daily Sheet
+                        Import Daily Sheet
                     </button>
                     <input type="file" id="dailyFileInput" accept=".csv, .xlsx, .xls" style="display: none;" onchange="handleDailyFileSelect(event)">
                     <button class="btn-export" onclick="exportToExcel()" id="btnExportExcel" title="Download full Excel report">
@@ -118,7 +118,7 @@
             <div class="filter-group date-range-group">
                 <div class="date-header-inline">
                     <label>Production Period:</label>
-                    <span class="active-date-pill" id="activeDatePill">📅 Wednesday, November 4, 2026</span>
+                    <span class="active-date-pill" id="activeDatePill">📅 Thursday, November 5, 2026</span>
                 </div>
                 <div class="date-range-inputs">
                     <div class="date-input-wrap">
@@ -182,7 +182,7 @@
                         </svg>
                     </div>
                     <div class="kpi-info">
-                        <div class="kpi-value" id="totalLength">307,845</div>
+                        <div class="kpi-value" id="totalLength">186,070</div>
                         <div class="kpi-label">Total Actual Production (km)</div>
                         <div class="kpi-sub" id="totalLengthSub">Achieved in selected period</div>
                     </div>
@@ -211,9 +211,9 @@
                         </svg>
                     </div>
                     <div class="kpi-info">
-                        <div class="kpi-value" id="deptPerformance" style="color: var(--accent-green);">94.4%</div>
+                        <div class="kpi-value" id="deptPerformance" style="color: var(--accent-orange);">57.1%</div>
                         <div class="kpi-label">Overall Machine Performance</div>
-                        <div class="kpi-sub" id="deptPerfLabel">Rating: Very Good</div>
+                        <div class="kpi-sub" id="deptPerfLabel">Rating: Under Target</div>
                     </div>
                 </div>
 
@@ -225,9 +225,9 @@
                         </svg>
                     </div>
                     <div class="kpi-info">
-                        <div class="kpi-value" id="totalOrdersKPI">74</div>
+                        <div class="kpi-value" id="totalOrdersKPI">85</div>
                         <div class="kpi-label">Production Work Orders</div>
-                        <div class="kpi-sub" id="ordersBreakdownSub">LV: 74</div>
+                        <div class="kpi-sub" id="ordersBreakdownSub">LV: 85</div>
                     </div>
                 </div>
 
@@ -242,12 +242,12 @@
                     </div>
                     <div class="kpi-info">
                         <div class="kpi-shifts-chips" id="kpiShiftsChips">
-                            <span class="kpi-shift-pill s1"><small>S1</small> <strong id="kpiShift1Val">101k</strong></span>
-                            <span class="kpi-shift-pill s2"><small>S2</small> <strong id="kpiShift2Val">90k</strong></span>
-                            <span class="kpi-shift-pill s3"><small>S3</small> <strong id="kpiShift3Val">117k</strong></span>
+                            <span class="kpi-shift-pill s1"><small>S1</small> <strong id="kpiShift1Val">74k</strong></span>
+                            <span class="kpi-shift-pill s2"><small>S2</small> <strong id="kpiShift2Val">45k</strong></span>
+                            <span class="kpi-shift-pill s3"><small>S3</small> <strong id="kpiShift3Val">67k</strong></span>
                         </div>
                         <div class="kpi-label">Aggregated Shift Output (km)</div>
-                        <div class="kpi-sub" id="kpiShiftsSub">Shift 3 (38.1%) Highest</div>
+                        <div class="kpi-sub" id="kpiShiftsSub">Shift 1 (39.8%) Highest</div>
                     </div>
                 </div>
             </div>
@@ -505,7 +505,8 @@
                                 <th style="text-align: center; width: 160px;">Production km/day</th>
                             </tr>
                         </thead>
-                        <tbody id="machineShiftBody"><tr class="highlight-row">
+                        <tbody id="machineShiftBody">
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">RS01</span>
             </td>
@@ -535,7 +536,7 @@
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS01" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 809/26/01 | 20,260 m">20,260 m</span>
+                    <span class="wo-len-km" title="Work Order: 809/26/01 | 23,420 m">23,420 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
@@ -547,7 +548,7 @@
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="RS01" data-idx="0">
-                    <span class="size-num-tag al" title="Work Order: 809/26/01 | Size: 400 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 809/26/01 | Size: 400 mm² (AL) | Recorded: 3x400">
                         400 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
@@ -561,23 +562,25 @@
                     </span>
                 </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="2.54 km">
-                    <span class="num" style="font-weight:700;">2,540</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.86 km">
-                    <span class="num" style="font-weight:700;">7,860</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="9.86 km">
-                    <span class="num" style="font-weight:700;">9,860</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="3.88 km">
+                    <span class="num" style="font-weight:700;">3,880</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="20,260 m">
-                <span class="num prod-km-value">20.26</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="8.68 km">
+                    <span class="num" style="font-weight:700;">8,680</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="10.86 km">
+                    <span class="num" style="font-weight:700;">10,860</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="23,420 m">
+                <span class="num prod-km-value">23.42</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">RS02</span>
             </td>
@@ -604,18 +607,18 @@
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="RS02" data-idx="1">
-                    <span class="wo-pill" title="Work Order: 1101/26/01">
-                        1101/26/01
+                    <span class="wo-pill" title="Work Order: 1586/26/01">
+                        1586/26/01
                     </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS02" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 2024/26/03 | 18,000 m">18,000 m</span>
+                    <span class="wo-len-km" title="Work Order: 2024/26/03 | 6,150 m">6,150 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS02" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 1101/26/01 | 6,720 m">6,720 m</span>
+                    <span class="wo-len-km" title="Work Order: 1586/26/01 | 4,410 m">4,410 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
@@ -624,20 +627,19 @@
                     <span class="family-badge lv" title="Work Order: 2024/26/03 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS02" data-idx="1">
-                    <span class="family-badge mv" title="Work Order: 1586/26/01 | Master Plan: Medium Voltage">MV</span>
+                    <span class="family-badge hv" title="Work Order: 1586/26/01 | Master Plan: High Voltage">HV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="RS02" data-idx="0">
-                    <span class="size-num-tag al" title="Work Order: 2024/26/03 | Size: 300 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 2024/26/03 | Size: 300 mm² (AL) | Recorded: 1x300">
                         300 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS02" data-idx="1">
-                    <span class="size-num-tag al" title="Work Order: 1101/26/01 | Size: 1400 mm² (AL)">
-                        300 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag al" title="Work Order: 1586/26/01 | Size: 1400 mm² (AL) | Recorded: 1x1400">
+                        1400 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
             </div>
@@ -649,30 +651,31 @@
                         AL
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS02" data-idx="1">
                     <span class="material-tag material-aluminum" title="Conductor: AL">
                         AL
                     </span>
                 </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="6.72 km">
-                    <span class="num" style="font-weight:700;">6,720</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.20 km">
-                    <span class="num" style="font-weight:700;">7,200</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="10.80 km">
-                    <span class="num" style="font-weight:700;">10,800</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="5.90 km">
+                    <span class="num" style="font-weight:700;">5,900</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="24,720 m">
-                <span class="num prod-km-value">24.72</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="0.85 km">
+                    <span class="num" style="font-weight:700;">850</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="3.81 km">
+                    <span class="num" style="font-weight:700;">3,810</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="10,560 m">
+                <span class="num prod-km-value">10.56</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">RS03</span>
             </td>
@@ -697,25 +700,57 @@
                     <span class="wo-pill" title="Work Order: 1385/26/03">
                         1385/26/03
                     </span>
+                </div>
+                <div class="order-v-row" data-machine="RS03" data-idx="1">
+                    <span class="wo-pill" title="Work Order: 1969/26/01">
+                        1969/26/01
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS03" data-idx="2">
+                    <span class="wo-pill" title="Work Order: 1055/26/02">
+                        1055/26/02
+                    </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS03" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 1385/26/03 | 22,660 m">22,660 m</span>
+                    <span class="wo-len-km" title="Work Order: 1385/26/03 | 6,530 m">6,530 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS03" data-idx="1">
+                    <span class="wo-len-km" title="Work Order: 1969/26/01 | 7,995 m">7,995 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS03" data-idx="2">
+                    <span class="wo-len-km" title="Work Order: 1055/26/02 | 2,100 m">2,100 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="RS03" data-idx="0">
                     <span class="family-badge lv" title="Work Order: 1385/26/03 | Master Plan: Low Voltage">LV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS03" data-idx="1">
+                    <span class="family-badge mv" title="Work Order: 1969/26/01 | Master Plan: Medium Voltage">MV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS03" data-idx="2">
+                    <span class="family-badge mv" title="Work Order: 1055/26/02 | Master Plan: Medium Voltage">MV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="RS03" data-idx="0">
-                    <span class="size-num-tag al" title="Work Order: 1385/26/03 | Size: 240 mm² (AL)">
-                        240 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag al" title="Work Order: 1385/26/03 | Size: 240+120 mm² (AL) | Recorded: 3x240+120">
+                        240+120 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS03" data-idx="1">
+                    <span class="size-num-tag al" title="Work Order: 1969/26/01 | Size: 500 mm² (AL) | Recorded: 1x500">
+                        500 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS03" data-idx="2">
+                    <span class="size-num-tag al" title="Work Order: 1055/26/02 | Size: 500 mm² (AL) | Recorded: 1x500">
+                        500 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
             </div>
@@ -727,24 +762,36 @@
                         AL
                     </span>
                 </div>
+                <div class="conductor-v-row" data-machine="RS03" data-idx="1">
+                    <span class="material-tag material-aluminum" title="Conductor: AL">
+                        AL
+                    </span>
+                </div>
+                <div class="conductor-v-row" data-machine="RS03" data-idx="2">
+                    <span class="material-tag material-aluminum" title="Conductor: AL">
+                        AL
+                    </span>
+                </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.64 km">
-                    <span class="num" style="font-weight:700;">7,640</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.13 km">
-                    <span class="num" style="font-weight:700;">7,130</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.89 km">
-                    <span class="num" style="font-weight:700;">7,890</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="5.74 km">
+                    <span class="num" style="font-weight:700;">5,740</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="22,660 m">
-                <span class="num prod-km-value">22.66</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="6.54 km">
+                    <span class="num" style="font-weight:700;">6,535</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="4.35 km">
+                    <span class="num" style="font-weight:700;">4,350</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="16,625 m">
+                <span class="num prod-km-value">16.63</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">RS04</span>
             </td>
@@ -758,103 +805,147 @@
                 <span class="shift-badge shift-s2 op-shift-badge">S2</span>
                 <div class="op-names"><span class="op-name" title="محمد مجدي حسين">محمد مجدي</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 3: سعيد محمد الطيب">
+            <div class="operator-v-row" title="Shift 3: حازم حامد وهبه">
                 <span class="shift-badge shift-s3 op-shift-badge">S3</span>
-                <div class="op-names"><span class="op-name" title="سعيد محمد الطيب">سعيد محمد</span></div>
+                <div class="op-names"><span class="op-name" title="حازم حامد وهبه">حازم حامد</span></div>
             </div></div>
         </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS04" data-idx="0">
+                    <span class="wo-pill" title="Work Order: 1351/26/02">
+                        1351/26/02
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS04" data-idx="1">
+                    <span class="wo-pill" title="Work Order: 2019/26/07">
+                        2019/26/07
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS04" data-idx="2">
+                    <span class="wo-pill" title="Work Order: 2019/26/06">
+                        2019/26/06
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS04" data-idx="3">
+                    <span class="wo-pill" title="Work Order: 2019/26/05">
+                        2019/26/05
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS04" data-idx="4">
                     <span class="wo-pill" title="Work Order: 1939/26/01">
                         1939/26/01
                     </span>
                 </div>
-                <div class="order-v-row" data-machine="RS04" data-idx="1">
-                    <span class="wo-pill" title="Work Order: 2065/26/04">
-                        2065/26/04
+                <div class="order-v-row" data-machine="RS04" data-idx="5">
+                    <span class="wo-pill" title="Work Order: 2153/26/04">
+                        2153/26/04
                     </span>
                 </div>
-                <div class="order-v-row" data-machine="RS04" data-idx="2">
-                    <span class="wo-pill" title="Work Order: 2071/26/01">
-                        2071/26/01
+                <div class="order-v-row" data-machine="RS04" data-idx="6">
+                    <span class="wo-pill" title="Work Order: 2082/26/03">
+                        2082/26/03
                     </span>
                 </div>
-                <div class="order-v-row" data-machine="RS04" data-idx="3">
-                    <span class="wo-pill" title="Work Order: 1591/26/02">
-                        1591/26/02
-                    </span>
-                </div>
-                <div class="order-v-row" data-machine="RS04" data-idx="4">
-                    <span class="wo-pill" title="Work Order: 2023/26/04">
-                        2023/26/04
+                <div class="order-v-row" data-machine="RS04" data-idx="7">
+                    <span class="wo-pill" title="Work Order: 1947/26/09">
+                        1947/26/09
                     </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS04" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 1939/26/01 | 9,740 m">9,740 m</span>
+                    <span class="wo-len-km" title="Work Order: 1351/26/02 | 10,500 m">10,500 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS04" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 2065/26/04 | 300 m">300 m</span>
+                    <span class="wo-len-km" title="Work Order: 2019/26/07 | 122 m">122 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS04" data-idx="2">
-                    <span class="wo-len-km" title="Work Order: 2071/26/01 | 2,510 m">2,510 m</span>
+                    <span class="wo-len-km" title="Work Order: 2019/26/06 | 74 m">74 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS04" data-idx="3">
-                    <span class="wo-len-km" title="Work Order: 1591/26/02 | 6,895 m">6,895 m</span>
+                    <span class="wo-len-km" title="Work Order: 2019/26/05 | 64 m">64 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS04" data-idx="4">
-                    <span class="wo-len-km" title="Work Order: 2023/26/04 | 1,000 m">1,000 m</span>
+                    <span class="wo-len-km" title="Work Order: 1939/26/01 | 1,740 m">1,740 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS04" data-idx="5">
+                    <span class="wo-len-km" title="Work Order: 2153/26/04 | 7,554 m">7,554 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS04" data-idx="6">
+                    <span class="wo-len-km" title="Work Order: 2082/26/03 | 1,694 m">1,694 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS04" data-idx="7">
+                    <span class="wo-len-km" title="Work Order: 1947/26/09 | 617 m">617 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="RS04" data-idx="0">
-                    <span class="family-badge other" title="Work Order: 1939/26/01 | Master Plan: Bare Copper">BARE</span>
+                    <span class="family-badge lv" title="Work Order: 1351/26/02 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS04" data-idx="1">
-                    <span class="family-badge mv" title="Work Order: 2065/26/04 | Master Plan: Medium Voltage">MV</span>
+                    <span class="family-badge lv" title="Work Order: 2019/26/07 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS04" data-idx="2">
-                    <span class="family-badge lv" title="Work Order: 2071/26/01 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 2019/26/06 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS04" data-idx="3">
-                    <span class="family-badge mv" title="Work Order: 1591/26/02 | Master Plan: Medium Voltage">MV</span>
+                    <span class="family-badge lv" title="Work Order: 2019/26/05 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS04" data-idx="4">
-                    <span class="family-badge lv" title="Work Order: 2023/26/04 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge other" title="Work Order: 1939/26/01 | Master Plan: Bare Conductor">BARE</span>
+                </div>
+                <div class="family-v-row" data-machine="RS04" data-idx="5">
+                    <span class="family-badge lv" title="Work Order: 2153/26/04 | Master Plan: Low Voltage">LV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS04" data-idx="6">
+                    <span class="family-badge mv" title="Work Order: 2082/26/03 | Master Plan: Medium Voltage">MV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS04" data-idx="7">
+                    <span class="family-badge lv" title="Work Order: 1947/26/09 | Master Plan: Low Voltage">LV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="RS04" data-idx="0">
-                    <span class="size-num-tag cu" title="Work Order: 1939/26/01 | Size: 240 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 1351/26/02 | Size: 240 mm² (CU) | Recorded: 1x240">
                         240 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS04" data-idx="1">
-                    <span class="size-num-tag cu" title="Work Order: 2065/26/04 | Size: 240 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 2019/26/07 | Size: 240 mm² (CU) | Recorded: 1x240">
                         240 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS04" data-idx="2">
-                    <span class="size-num-tag cu" title="Work Order: 2071/26/01 | Size: 240 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 2019/26/06 | Size: 240 mm² (CU) | Recorded: 1x240">
                         240 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS04" data-idx="3">
-                    <span class="size-num-tag cu" title="Work Order: 1591/26/02 | Size: 240 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 2019/26/05 | Size: 240 mm² (CU) | Recorded: 1x240">
                         240 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS04" data-idx="4">
-                    <span class="size-num-tag cu" title="Work Order: 2023/26/04 | Size: 240 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 1939/26/01 | Size: 240 mm² (CU) | Recorded: 1x240">
+                        240 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS04" data-idx="5">
+                    <span class="size-num-tag cu" title="Work Order: 2153/26/04 | Size: 240 mm² (CU) | Recorded: 1x240">
+                        240 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS04" data-idx="6">
+                    <span class="size-num-tag cu" title="Work Order: 2082/26/03 | Size: 240 mm² (CU) | Recorded: 3x240, 1x240">
+                        240 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS04" data-idx="7">
+                    <span class="size-num-tag cu" title="Work Order: 1947/26/09 | Size: 240 mm² (CU) | Recorded: 1x240">
                         240 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
@@ -867,48 +958,61 @@
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS04" data-idx="1">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS04" data-idx="2">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS04" data-idx="3">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS04" data-idx="4">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
+                <div class="conductor-v-row" data-machine="RS04" data-idx="5">
+                    <span class="material-tag material-copper" title="Conductor: CU">
+                        CU
+                    </span>
+                </div>
+                <div class="conductor-v-row" data-machine="RS04" data-idx="6">
+                    <span class="material-tag material-copper" title="Conductor: CU">
+                        CU
+                    </span>
+                </div>
+                <div class="conductor-v-row" data-machine="RS04" data-idx="7">
+                    <span class="material-tag material-copper" title="Conductor: CU">
+                        CU
+                    </span>
+                </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="6.82 km">
-                    <span class="num" style="font-weight:700;">6,820</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="5.95 km">
-                    <span class="num" style="font-weight:700;">5,945</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.68 km">
-                    <span class="num" style="font-weight:700;">7,680</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="8.45 km">
+                    <span class="num" style="font-weight:700;">8,450</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="20,445 m">
-                <span class="num prod-km-value">20.45</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="7.75 km">
+                    <span class="num" style="font-weight:700;">7,750</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="6.17 km">
+                    <span class="num" style="font-weight:700;">6,165</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="22,365 m">
+                <span class="num prod-km-value">22.37</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">RS05</span>
             </td>
@@ -918,108 +1022,120 @@
                 <span class="shift-badge shift-s1 op-shift-badge">S1</span>
                 <div class="op-names"><span class="op-name" title="احمد عبده السيد">احمد عبده</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 2: يسري خليفة محمد">
+            <div class="operator-v-row" title="Shift 2: محمد محمود محمد">
                 <span class="shift-badge shift-s2 op-shift-badge">S2</span>
-                <div class="op-names"><span class="op-name" title="يسري خليفة محمد">يسري خليفة</span></div>
+                <div class="op-names"><span class="op-name" title="محمد محمود محمد">محمد محمود</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 3: علي محمد علي كامل">
+            <div class="operator-v-row" title="Shift 3: شحته صابر يحي">
                 <span class="shift-badge shift-s3 op-shift-badge">S3</span>
-                <div class="op-names"><span class="op-name" title="علي محمد علي كامل">علي محمد</span></div>
+                <div class="op-names"><span class="op-name" title="شحته صابر يحي">شحته صابر</span></div>
             </div></div>
         </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS05" data-idx="0">
-                    <span class="wo-pill" title="Work Order: 2159/26/16">
-                        2159/26/16
+                    <span class="wo-pill" title="Work Order: 1811/26/01">
+                        1811/26/01
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="1">
-                    <span class="wo-pill" title="Work Order: 2071/26/02">
-                        2071/26/02
+                    <span class="wo-pill" title="Work Order: 2124/26/10">
+                        2124/26/10
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="2">
-                    <span class="wo-pill" title="Work Order: 2042/26/01">
-                        2042/26/01
+                    <span class="wo-pill" title="Work Order: 1463/26/02">
+                        1463/26/02
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="3">
-                    <span class="wo-pill" title="Work Order: 2002/26/01">
-                        2002/26/01
+                    <span class="wo-pill" title="Work Order: 1797/26/23">
+                        1797/26/23
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="4">
-                    <span class="wo-pill" title="Work Order: 1910/26/02">
-                        1910/26/02
+                    <span class="wo-pill" title="Work Order: 1912/26/02">
+                        1912/26/02
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS05" data-idx="5">
+                    <span class="wo-pill" title="Work Order: 1560/25/15">
+                        1560/25/15
                     </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS05" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 2159/26/16 | 2,360 m">2,360 m</span>
+                    <span class="wo-len-km" title="Work Order: 1811/26/01 | 101 m">101 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 2071/26/02 | 2,100 m">2,100 m</span>
+                    <span class="wo-len-km" title="Work Order: 2124/26/10 | 5,209 m">5,209 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="2">
-                    <span class="wo-len-km" title="Work Order: 2042/26/01 | 1,395 m">1,395 m</span>
+                    <span class="wo-len-km" title="Work Order: 1463/26/02 | 5,040 m">5,040 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="3">
-                    <span class="wo-len-km" title="Work Order: 2002/26/01 | 12,600 m">12,600 m</span>
+                    <span class="wo-len-km" title="Work Order: 1797/26/23 | 730 m">730 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS05" data-idx="4">
-                    <span class="wo-len-km" title="Work Order: 1910/26/02 | 4,800 m">4,800 m</span>
+                    <span class="wo-len-km" title="Work Order: 1912/26/02 | 1,060 m">1,060 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS05" data-idx="5">
+                    <span class="wo-len-km" title="Work Order: 1560/25/15 | 6,700 m">6,700 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="RS05" data-idx="0">
-                    <span class="family-badge lv" title="Work Order: 2159/26/16 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 1811/26/01 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS05" data-idx="1">
-                    <span class="family-badge lv" title="Work Order: 2071/26/02 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 2124/26/10 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS05" data-idx="2">
-                    <span class="family-badge lv" title="Work Order: 2042/26/01 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 1463/26/02 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS05" data-idx="3">
-                    <span class="family-badge lv" title="Work Order: 2002/26/01 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 1797/26/23 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS05" data-idx="4">
-                    <span class="family-badge lv" title="Work Order: 1910/26/02 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 1912/26/02 | Master Plan: Low Voltage">LV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS05" data-idx="5">
+                    <span class="family-badge lv" title="Work Order: 1560/25/15 | Master Plan: Low Voltage">LV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="RS05" data-idx="0">
-                    <span class="size-num-tag cu" title="Work Order: 2159/26/16 | Size: 120 mm² (CU)">
-                        120 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag cu" title="Work Order: 1811/26/01 | Size: 240+120 mm² (CU) | Recorded: 3x240+120">
+                        240+120 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS05" data-idx="1">
-                    <span class="size-num-tag cu" title="Work Order: 2071/26/02 | Size: 120 mm² (CU)">
-                        120 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag cu" title="Work Order: 2124/26/10 | Size: 240+120 mm² (CU) | Recorded: 3x240+120">
+                        240+120 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS05" data-idx="2">
-                    <span class="size-num-tag cu" title="Work Order: 2042/26/01 | Size: 120 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 1463/26/02 | Size: 120 mm² (CU) | Recorded: 3x120">
                         120 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS05" data-idx="3">
-                    <span class="size-num-tag cu" title="Work Order: 2002/26/01 | Size: 120 mm² (CU)">
-                        120 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag cu" title="Work Order: 1797/26/23 | Size: 240+120 mm² (CU) | Recorded: 3x240+120">
+                        240+120 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS05" data-idx="4">
-                    <span class="size-num-tag cu" title="Work Order: 1910/26/02 | Size: 120 mm² (CU)">
-                        120 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag cu" title="Work Order: 1912/26/02 | Size: 240+120 mm² (CU) | Recorded: 3x240+120">
+                        240+120 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS05" data-idx="5">
+                    <span class="size-num-tag al" title="Work Order: 1560/25/15 | Size: 70+35 mm² (AL) | Recorded: 3x70+35">
+                        70+35 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
             </div>
@@ -1031,48 +1147,51 @@
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS05" data-idx="1">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS05" data-idx="2">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS05" data-idx="3">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS05" data-idx="4">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
+                <div class="conductor-v-row" data-machine="RS05" data-idx="5">
+                    <span class="material-tag material-aluminum" title="Conductor: AL">
+                        AL
+                    </span>
+                </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="9.30 km">
-                    <span class="num" style="font-weight:700;">9,300</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.80 km">
-                    <span class="num" style="font-weight:700;">7,800</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="6.16 km">
-                    <span class="num" style="font-weight:700;">6,155</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="8.44 km">
+                    <span class="num" style="font-weight:700;">8,440</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="23,255 m">
-                <span class="num prod-km-value">23.25</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="3.70 km">
+                    <span class="num" style="font-weight:700;">3,700</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="6.70 km">
+                    <span class="num" style="font-weight:700;">6,700</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="18,840 m">
+                <span class="num prod-km-value">18.84</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">RS06</span>
             </td>
@@ -1086,52 +1205,115 @@
                 <span class="shift-badge shift-s2 op-shift-badge">S2</span>
                 <div class="op-names"><span class="op-name" title="وائل عبد العليم محمد">وائل عبد العليم</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 3: علي محمد علي كامل">
+            <div class="operator-v-row" title="Shift 3: محمد محرز السعيد">
                 <span class="shift-badge shift-s3 op-shift-badge">S3</span>
-                <div class="op-names"><span class="op-name" title="علي محمد علي كامل">علي محمد</span></div>
+                <div class="op-names"><span class="op-name" title="محمد محرز السعيد">محمد محرز</span></div>
             </div></div>
         </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS06" data-idx="0">
+                    <span class="wo-pill" title="Work Order: 1811/26/01">
+                        1811/26/01
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="1">
+                    <span class="wo-pill" title="Work Order: 2124/26/10">
+                        2124/26/10
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="2">
+                    <span class="wo-pill" title="Work Order: 2065/26/02">
+                        2065/26/02
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="3">
                     <span class="wo-pill" title="Work Order: 2082/26/02">
                         2082/26/02
                     </span>
                 </div>
-                <div class="order-v-row" data-machine="RS06" data-idx="1">
+                <div class="order-v-row" data-machine="RS06" data-idx="4">
                     <span class="wo-pill" title="Work Order: 1117/26/02">
                         1117/26/02
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="5">
+                    <span class="wo-pill" title="Work Order: 1889/26/01">
+                        1889/26/01
                     </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="RS06" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 2082/26/02 | 3,945 m">3,945 m</span>
+                    <span class="wo-len-km" title="Work Order: 1811/26/01 | 16 m">16 m</span>
                 </div>
                 <div class="order-v-row" data-machine="RS06" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 1117/26/02 | 3,020 m">3,020 m</span>
+                    <span class="wo-len-km" title="Work Order: 2124/26/10 | 536 m">536 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="2">
+                    <span class="wo-len-km" title="Work Order: 2065/26/02 | 1,063 m">1,063 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="3">
+                    <span class="wo-len-km" title="Work Order: 2082/26/02 | 415 m">415 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="4">
+                    <span class="wo-len-km" title="Work Order: 1117/26/02 | 1,510 m">1,510 m</span>
+                </div>
+                <div class="order-v-row" data-machine="RS06" data-idx="5">
+                    <span class="wo-len-km" title="Work Order: 1889/26/01 | 2,100 m">2,100 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="RS06" data-idx="0">
-                    <span class="family-badge mv" title="Work Order: 2082/26/02 | Master Plan: Medium Voltage">MV</span>
+                    <span class="family-badge lv" title="Work Order: 1811/26/01 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="RS06" data-idx="1">
+                    <span class="family-badge lv" title="Work Order: 2124/26/10 | Master Plan: Low Voltage">LV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS06" data-idx="2">
+                    <span class="family-badge mv" title="Work Order: 2065/26/02 | Master Plan: Medium Voltage">MV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS06" data-idx="3">
+                    <span class="family-badge mv" title="Work Order: 2082/26/02 | Master Plan: Medium Voltage">MV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS06" data-idx="4">
                     <span class="family-badge hv" title="Work Order: 1117/26/02 | Master Plan: High Voltage">HV</span>
+                </div>
+                <div class="family-v-row" data-machine="RS06" data-idx="5">
+                    <span class="family-badge lv" title="Work Order: 1889/26/01 | Master Plan: Low Voltage">LV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="RS06" data-idx="0">
-                    <span class="size-num-tag cu" title="Work Order: 2082/26/02 | Size: 800 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 1811/26/01 | Size: 800 mm² (CU) | Recorded: 1x800">
                         800 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="RS06" data-idx="1">
-                    <span class="size-num-tag cu" title="Work Order: 1117/26/02 | Size: 800 mm² (CU)">
+                    <span class="size-num-tag cu" title="Work Order: 2124/26/10 | Size: 800 mm² (CU) | Recorded: 1x800">
+                        800 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS06" data-idx="2">
+                    <span class="size-num-tag cu" title="Work Order: 2065/26/02 | Size: 800 mm² (CU) | Recorded: 1x800">
+                        800 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS06" data-idx="3">
+                    <span class="size-num-tag cu" title="Work Order: 2082/26/02 | Size: 800 mm² (CU) | Recorded: 1x800">
+                        800 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS06" data-idx="4">
+                    <span class="size-num-tag cu" title="Work Order: 1117/26/02 | Size: 800 mm² (CU) | Recorded: 1x800">
+                        800 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="RS06" data-idx="5">
+                    <span class="size-num-tag cu" title="Work Order: 1889/26/01 | Size: 800 mm² (CU) | Recorded: 1x800">
                         800 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
@@ -1144,30 +1326,51 @@
                         CU
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="RS06" data-idx="1">
                     <span class="material-tag material-copper" title="Conductor: CU">
                         CU
                     </span>
                 </div>
+                <div class="conductor-v-row" data-machine="RS06" data-idx="2">
+                    <span class="material-tag material-copper" title="Conductor: CU">
+                        CU
+                    </span>
+                </div>
+                <div class="conductor-v-row" data-machine="RS06" data-idx="3">
+                    <span class="material-tag material-copper" title="Conductor: CU">
+                        CU
+                    </span>
+                </div>
+                <div class="conductor-v-row" data-machine="RS06" data-idx="4">
+                    <span class="material-tag material-copper" title="Conductor: CU">
+                        CU
+                    </span>
+                </div>
+                <div class="conductor-v-row" data-machine="RS06" data-idx="5">
+                    <span class="material-tag material-copper" title="Conductor: CU">
+                        CU
+                    </span>
+                </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="2.76 km">
-                    <span class="num" style="font-weight:700;">2,760</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="2.29 km">
-                    <span class="num" style="font-weight:700;">2,290</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="1.92 km">
-                    <span class="num" style="font-weight:700;">1,915</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="0.98 km">
+                    <span class="num" style="font-weight:700;">985</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="6,965 m">
-                <span class="num prod-km-value">6.96</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="2.04 km">
+                    <span class="num" style="font-weight:700;">2,035</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="2.62 km">
+                    <span class="num" style="font-weight:700;">2,620</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="5,640 m">
+                <span class="num prod-km-value">5.64</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">CS01</span>
             </td>
@@ -1189,45 +1392,44 @@
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="CS01" data-idx="0">
-                    <span class="wo-pill" title="Work Order: 1934/26/16">
-                        1934/26/16
+                    <span class="wo-pill" title="Work Order: 1386/26/05">
+                        1386/26/05
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="CS01" data-idx="1">
-                    <span class="wo-pill" title="Work Order: 1934/26/07">
-                        1934/26/07
+                    <span class="wo-pill" title="Work Order: 1385/26/05">
+                        1385/26/05
                     </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="CS01" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 1934/26/16 | 15,900 m">15,900 m</span>
+                    <span class="wo-len-km" title="Work Order: 1386/26/05 | 10,055 m">10,055 m</span>
                 </div>
                 <div class="order-v-row" data-machine="CS01" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 1934/26/07 | 3,300 m">3,300 m</span>
+                    <span class="wo-len-km" title="Work Order: 1385/26/05 | 14,975 m">14,975 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="CS01" data-idx="0">
-                    <span class="family-badge lv" title="Work Order: 1934/26/16 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 1386/26/05 | Not found in Master Plan (using production data family)">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="CS01" data-idx="1">
-                    <span class="family-badge lv" title="Work Order: 1934/26/07 | Master Plan: Low Voltage">LV</span>
+                    <span class="family-badge lv" title="Work Order: 1385/26/05 | Master Plan: Low Voltage">LV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="CS01" data-idx="0">
-                    <span class="size-num-tag al" title="Work Order: 1934/26/16 | Size: 150 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 1386/26/05 | Size: 150 mm² (AL) | Recorded: 1×150">
                         150 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="CS01" data-idx="1">
-                    <span class="size-num-tag al" title="Work Order: 1934/26/07 | Size: 150 mm² (AL)">
-                        150 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag al" title="Work Order: 1385/26/05 | Size: 150+70 mm² (AL) | Recorded: 3x150+70">
+                        150+70 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
             </div>
@@ -1239,42 +1441,43 @@
                         AL
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="CS01" data-idx="1">
                     <span class="material-tag material-aluminum" title="Conductor: AL">
                         AL
                     </span>
                 </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="3.30 km">
-                    <span class="num" style="font-weight:700;">3,300</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="10.72 km">
-                    <span class="num" style="font-weight:700;">10,725</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="5.17 km">
-                    <span class="num" style="font-weight:700;">5,175</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="10.05 km">
+                    <span class="num" style="font-weight:700;">10,055</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="19,200 m">
-                <span class="num prod-km-value">19.20</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="7.67 km">
+                    <span class="num" style="font-weight:700;">7,670</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="7.30 km">
+                    <span class="num" style="font-weight:700;">7,305</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="25,030 m">
+                <span class="num prod-km-value">25.03</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">CS02</span>
             </td>
         <td style="text-align: center; vertical-align: middle;">
             <div class="operator-v-stack">
-            <div class="operator-v-row" title="Shift 1: احمد عبده السيد">
+            <div class="operator-v-row" title="Shift 1: احمد عبده السيد / محمد امام الشافعي">
                 <span class="shift-badge shift-s1 op-shift-badge">S1</span>
-                <div class="op-names"><span class="op-name" title="احمد عبده السيد">احمد عبده</span></div>
+                <div class="op-names"><span class="op-name" title="احمد عبده السيد">احمد عبده</span><span class="op-sep">/</span><span class="op-name" title="محمد امام الشافعي">محمد امام</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 2: صلاح عادل عبد النبي">
+            <div class="operator-v-row" title="Shift 2: احمد مجدي شريف">
                 <span class="shift-badge shift-s2 op-shift-badge">S2</span>
-                <div class="op-names"><span class="op-name" title="صلاح عادل عبد النبي">صلاح عادل</span></div>
+                <div class="op-names"><span class="op-name" title="احمد مجدي شريف">احمد مجدي</span></div>
             </div>
             <div class="operator-v-row" title="Shift 3: محمد فوزي محمد">
                 <span class="shift-badge shift-s3 op-shift-badge">S3</span>
@@ -1284,45 +1487,76 @@
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="CS02" data-idx="0">
-                    <span class="wo-pill" title="Work Order: 1990/26/14">
-                        1990/26/14
+                    <span class="wo-pill" title="Work Order: 1934/26/25">
+                        1934/26/25
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="CS02" data-idx="1">
+                    <span class="wo-pill" title="Work Order: 1934/26/15">
+                        1934/26/15
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="CS02" data-idx="2">
                     <span class="wo-pill" title="Work Order: 1990/26/04">
                         1990/26/04
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="CS02" data-idx="3">
+                    <span class="wo-pill" title="Work Order: 1713/26/05">
+                        1713/26/05
                     </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="CS02" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 1990/26/14 | 11,400 m">11,400 m</span>
+                    <span class="wo-len-km" title="Work Order: 1934/26/25 | 3,400 m">3,400 m</span>
                 </div>
                 <div class="order-v-row" data-machine="CS02" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 1990/26/04 | 22,580 m">22,580 m</span>
+                    <span class="wo-len-km" title="Work Order: 1934/26/15 | 9,200 m">9,200 m</span>
+                </div>
+                <div class="order-v-row" data-machine="CS02" data-idx="2">
+                    <span class="wo-len-km" title="Work Order: 1990/26/04 | 6,180 m">6,180 m</span>
+                </div>
+                <div class="order-v-row" data-machine="CS02" data-idx="3">
+                    <span class="wo-len-km" title="Work Order: 1713/26/05 | 9,000 m">9,000 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="CS02" data-idx="0">
-                    <span class="family-badge lv volt-unverified" title="Work Order: 1990/26/14 | Not found in Master Plan (using production data family)">LV</span>
+                    <span class="family-badge lv" title="Work Order: 1934/26/25 | Master Plan: Low Voltage">LV</span>
                 </div>
                 <div class="family-v-row" data-machine="CS02" data-idx="1">
+                    <span class="family-badge lv" title="Work Order: 1934/26/15 | Master Plan: Low Voltage">LV</span>
+                </div>
+                <div class="family-v-row" data-machine="CS02" data-idx="2">
                     <span class="family-badge lv" title="Work Order: 1990/26/04 | Master Plan: Low Voltage">LV</span>
+                </div>
+                <div class="family-v-row" data-machine="CS02" data-idx="3">
+                    <span class="family-badge lv" title="Work Order: 1713/26/05 | Master Plan: Low Voltage">LV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="CS02" data-idx="0">
-                    <span class="size-num-tag al" title="Work Order: 1990/26/14 | Size: 150 mm² (AL)">
-                        150 <small class="size-unit-sub">mm²</small>
+                    <span class="size-num-tag al" title="Work Order: 1934/26/25 | Size: 120 mm² (AL) | Recorded: 4x1x120">
+                        120 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="CS02" data-idx="1">
-                    <span class="size-num-tag al" title="Work Order: 1990/26/04 | Size: 120 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 1934/26/15 | Size: 120 mm² (AL) | Recorded: 4x1x120">
                         120 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="CS02" data-idx="2">
+                    <span class="size-num-tag al" title="Work Order: 1990/26/04 | Size: 120 mm² (AL) | Recorded: 1x120">
+                        120 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="CS02" data-idx="3">
+                    <span class="size-num-tag al" title="Work Order: 1713/26/05 | Size: 50+25 mm² (AL) | Recorded: 3x50+25">
+                        50+25 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
             </div>
@@ -1334,30 +1568,41 @@
                         AL
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="CS02" data-idx="1">
                     <span class="material-tag material-aluminum" title="Conductor: AL">
                         AL
                     </span>
                 </div>
+                <div class="conductor-v-row" data-machine="CS02" data-idx="2">
+                    <span class="material-tag material-aluminum" title="Conductor: AL">
+                        AL
+                    </span>
+                </div>
+                <div class="conductor-v-row" data-machine="CS02" data-idx="3">
+                    <span class="material-tag material-aluminum" title="Conductor: AL">
+                        AL
+                    </span>
+                </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="12.08 km">
-                    <span class="num" style="font-weight:700;">12,080</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="10.50 km">
-                    <span class="num" style="font-weight:700;">10,500</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="11.40 km">
-                    <span class="num" style="font-weight:700;">11,400</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="12.98 km">
+                    <span class="num" style="font-weight:700;">12,980</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="33,980 m">
-                <span class="num prod-km-value">33.98</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="5.80 km">
+                    <span class="num" style="font-weight:700;">5,800</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="9.00 km">
+                    <span class="num" style="font-weight:700;">9,000</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="27,780 m">
+                <span class="num prod-km-value">27.78</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">DS01</span>
             </td>
@@ -1367,90 +1612,55 @@
                 <span class="shift-badge shift-s1 op-shift-badge">S1</span>
                 <div class="op-names"><span class="op-name" title="احمد عبده السيد">احمد عبده</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 2: اسامه محمد ربيع">
+            <div class="operator-v-row" title="Shift 2: No operator">
                 <span class="shift-badge shift-s2 op-shift-badge">S2</span>
-                <div class="op-names"><span class="op-name" title="اسامه محمد ربيع">اسامه محمد</span></div>
+                <div class="op-names"><span class="op-empty">—</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 3: محمد ابراهيم الدسوقي">
+            <div class="operator-v-row" title="Shift 3: محمود صلاح محمد">
                 <span class="shift-badge shift-s3 op-shift-badge">S3</span>
-                <div class="op-names"><span class="op-name" title="محمد ابراهيم الدسوقي">محمد ابراهيم</span></div>
+                <div class="op-names"><span class="op-name" title="محمود صلاح محمد">محمود صلاح</span></div>
             </div></div>
         </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="DS01" data-idx="0">
-                    <span class="wo-pill" title="Work Order: 1713/26/05">
-                        1713/26/05
-                    </span>
-                </div>
-                <div class="order-v-row" data-machine="DS01" data-idx="1">
                     <span class="wo-pill" title="Work Order: 1766/26/03">
                         1766/26/03
                     </span>
                 </div>
-                <div class="order-v-row" data-machine="DS01" data-idx="2">
-                    <span class="wo-pill" title="Work Order: 2167/26/03">
-                        2167/26/03
-                    </span>
-                </div>
-                <div class="order-v-row" data-machine="DS01" data-idx="3">
-                    <span class="wo-pill" title="Work Order: 1938/26/02">
-                        1938/26/02
+                <div class="order-v-row" data-machine="DS01" data-idx="1">
+                    <span class="wo-pill" title="Work Order: 1316/26/02">
+                        1316/26/02
                     </span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="DS01" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 1713/26/05 | 11,300 m">11,300 m</span>
+                    <span class="wo-len-km" title="Work Order: 1766/26/03 | 6,010 m">6,010 m</span>
                 </div>
                 <div class="order-v-row" data-machine="DS01" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 1766/26/03 | 34,460 m">34,460 m</span>
-                </div>
-                <div class="order-v-row" data-machine="DS01" data-idx="2">
-                    <span class="wo-len-km" title="Work Order: 2167/26/03 | 56,000 m">56,000 m</span>
-                </div>
-                <div class="order-v-row" data-machine="DS01" data-idx="3">
-                    <span class="wo-len-km" title="Work Order: 1938/26/02 | 7,200 m">7,200 m</span>
+                    <span class="wo-len-km" title="Work Order: 1316/26/02 | 13,000 m">13,000 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="DS01" data-idx="0">
-                    <span class="family-badge lv" title="Work Order: 1713/26/05 | Master Plan: Low Voltage">LV</span>
-                </div>
-                <div class="family-v-row" data-machine="DS01" data-idx="1">
                     <span class="family-badge lv" title="Work Order: 1766/26/03 | Master Plan: Low Voltage">LV</span>
                 </div>
-                <div class="family-v-row" data-machine="DS01" data-idx="2">
-                    <span class="family-badge lv volt-unverified" title="Work Order: 2167/26/03 | Not found in Master Plan (using production data family)">LV</span>
-                </div>
-                <div class="family-v-row" data-machine="DS01" data-idx="3">
-                    <span class="family-badge lv" title="Work Order: 1938/26/02 | Master Plan: Low Voltage">LV</span>
+                <div class="family-v-row" data-machine="DS01" data-idx="1">
+                    <span class="family-badge lv" title="Work Order: 1316/26/02 | Master Plan: Low Voltage">LV</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="DS01" data-idx="0">
-                    <span class="size-num-tag al" title="Work Order: 1713/26/05 | Size: 25 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 1766/26/03 | Size: 25 mm² (AL) | Recorded: 4x25">
                         25 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="DS01" data-idx="1">
-                    <span class="size-num-tag al" title="Work Order: 1766/26/03 | Size: 25 mm² (AL)">
-                        25 <small class="size-unit-sub">mm²</small>
-                    </span>
-                </div>
-            
-                <div class="size-v-row" data-machine="DS01" data-idx="2">
-                    <span class="size-num-tag al" title="Work Order: 2167/26/03 | Size: 25 mm² (AL)">
-                        25 <small class="size-unit-sub">mm²</small>
-                    </span>
-                </div>
-            
-                <div class="size-v-row" data-machine="DS01" data-idx="3">
-                    <span class="size-num-tag al" title="Work Order: 1938/26/02 | Size: 25 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 1316/26/02 | Size: 25 mm² (AL) | Recorded: 4x25">
                         25 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
@@ -1463,42 +1673,28 @@
                         AL
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="DS01" data-idx="1">
                     <span class="material-tag material-aluminum" title="Conductor: AL">
                         AL
                     </span>
                 </div>
-            
-                <div class="conductor-v-row" data-machine="DS01" data-idx="2">
-                    <span class="material-tag material-aluminum" title="Conductor: AL">
-                        AL
-                    </span>
-                </div>
-            
-                <div class="conductor-v-row" data-machine="DS01" data-idx="3">
-                    <span class="material-tag material-aluminum" title="Conductor: AL">
-                        AL
-                    </span>
-                </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="42.20 km">
-                    <span class="num" style="font-weight:700;">42,200</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="21.80 km">
-                    <span class="num" style="font-weight:700;">21,800</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="44.96 km">
-                    <span class="num" style="font-weight:700;">44,960</span>
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="6.01 km">
+                    <span class="num" style="font-weight:700;">6,010</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="108,960 m">
-                <span class="num prod-km-value">108.96</span>
+<td style="text-align: center; vertical-align: middle;"><span style="color:#cbd5e1">-</span></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="13.00 km">
+                    <span class="num" style="font-weight:700;">13,000</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="19,010 m">
+                <span class="num prod-km-value">19.01</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="highlight-row">
+            </td>
+        </tr>
+<tr class="highlight-row">
             <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">CN</span>
             </td>
@@ -1508,9 +1704,9 @@
                 <span class="shift-badge shift-s1 op-shift-badge">S1</span>
                 <div class="op-names"><span class="op-name" title="احمد عبده السيد">احمد عبده</span></div>
             </div>
-            <div class="operator-v-row" title="Shift 2: محمد سامي مصطفي">
+            <div class="operator-v-row" title="Shift 2: محمود عبدالسلام محمود">
                 <span class="shift-badge shift-s2 op-shift-badge">S2</span>
-                <div class="op-names"><span class="op-name" title="محمد سامي مصطفي">محمد سامي</span></div>
+                <div class="op-names"><span class="op-name" title="محمود عبدالسلام محمود">محمود عبدالسلام</span></div>
             </div>
             <div class="operator-v-row" title="Shift 3: محمد ابراهيم محمود">
                 <span class="shift-badge shift-s3 op-shift-badge">S3</span>
@@ -1525,6 +1721,11 @@
                     </span>
                 </div>
                 <div class="order-v-row" data-machine="CN" data-idx="1">
+                    <span class="wo-pill" title="Work Order: 1863/26/05">
+                        1863/26/05
+                    </span>
+                </div>
+                <div class="order-v-row" data-machine="CN" data-idx="2">
                     <span class="wo-pill" title="Work Order: 1863/26/06">
                         1863/26/06
                     </span>
@@ -1533,31 +1734,41 @@
             <td style="text-align: center; vertical-align: middle;">
                 <div class="order-v-stack">
                 <div class="order-v-row" data-machine="CN" data-idx="0">
-                    <span class="wo-len-km" title="Work Order: 1862/26/05 | 19,950 m">19,950 m</span>
+                    <span class="wo-len-km" title="Work Order: 1862/26/05 | 11,550 m">11,550 m</span>
                 </div>
                 <div class="order-v-row" data-machine="CN" data-idx="1">
-                    <span class="wo-len-km" title="Work Order: 1863/26/06 | 7,450 m">7,450 m</span>
+                    <span class="wo-len-km" title="Work Order: 1863/26/05 | 2,100 m">2,100 m</span>
+                </div>
+                <div class="order-v-row" data-machine="CN" data-idx="2">
+                    <span class="wo-len-km" title="Work Order: 1863/26/06 | 3,150 m">3,150 m</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="family-v-stack">
                 <div class="family-v-row" data-machine="CN" data-idx="0">
-                    <span class="family-badge other" title="Work Order: 1862/26/05 | Master Plan: Solid">SOLID</span>
+                    <span class="family-badge other" title="Work Order: 1862/26/05 | Master Plan: Solid Conductor">SOLID</span>
                 </div>
                 <div class="family-v-row" data-machine="CN" data-idx="1">
-                    <span class="family-badge other" title="Work Order: 1863/26/06 | Master Plan: Solid">SOLID</span>
+                    <span class="family-badge lv" title="Work Order: 1863/26/05 | Master Plan: Low Voltage">LV</span>
+                </div>
+                <div class="family-v-row" data-machine="CN" data-idx="2">
+                    <span class="family-badge other" title="Work Order: 1863/26/06 | Master Plan: Solid Conductor">SOLID</span>
                 </div></div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
                 <div class="size-v-stack">
                 <div class="size-v-row" data-machine="CN" data-idx="0">
-                    <span class="size-num-tag al" title="Work Order: 1862/26/05 | Size: 185 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 1862/26/05 | Size: 185 mm² (AL) | Recorded: 4x185">
                         185 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
-            
                 <div class="size-v-row" data-machine="CN" data-idx="1">
-                    <span class="size-num-tag al" title="Work Order: 1863/26/06 | Size: 240 mm² (AL)">
+                    <span class="size-num-tag al" title="Work Order: 1863/26/05 | Size: 185 mm² (AL) | Recorded: 5x185">
+                        185 <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+                <div class="size-v-row" data-machine="CN" data-idx="2">
+                    <span class="size-num-tag al" title="Work Order: 1863/26/06 | Size: 240 mm² (AL) | Recorded: 4x240">
                         240 <small class="size-unit-sub">mm²</small>
                     </span>
                 </div>
@@ -1570,65 +1781,72 @@
                         AL
                     </span>
                 </div>
-            
                 <div class="conductor-v-row" data-machine="CN" data-idx="1">
                     <span class="material-tag material-aluminum" title="Conductor: AL">
                         AL
                     </span>
                 </div>
+                <div class="conductor-v-row" data-machine="CN" data-idx="2">
+                    <span class="material-tag material-aluminum" title="Conductor: AL">
+                        AL
+                    </span>
+                </div>
             </div>
-            </td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="7.45 km">
-                    <span class="num" style="font-weight:700;">7,450</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="8.40 km">
-                    <span class="num" style="font-weight:700;">8,400</span>
-                    <small style="font-size:0.7rem; color:#64748b;">m</small>
-                </div></td><td style="text-align: center; vertical-align: middle;">
-                <div class="shift-cell-wrapper" title="11.55 km">
+            </td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="11.55 km">
                     <span class="num" style="font-weight:700;">11,550</span>
                     <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div></td>
-            <td style="text-align: center; vertical-align: middle;" title="27,400 m">
-                <span class="num prod-km-value">27.40</span>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="2.10 km">
+                    <span class="num" style="font-weight:700;">2,100</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+<td style="text-align: center; vertical-align: middle;"><div class="shift-cell-wrapper" title="3.15 km">
+                    <span class="num" style="font-weight:700;">3,150</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
+                </div></td>
+            <td style="text-align: center; vertical-align: middle;" title="16,800 m">
+                <span class="num prod-km-value">16.80</span>
                 <span class="prod-km-unit">km/day</span>
-            </td></tr><tr class="total-summary-row">
+            </td>
+        </tr>
+<tr class="total-summary-row">
         <td style="text-align: center; color: var(--accent-blue); font-size: 1.02rem; font-weight: 900;">
             Total
         </td>
         <td style="text-align: center;"></td>
         <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
-            26 Orders
+            35 Orders
         </td>
         <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
-            307.85 km
+            186.07 km
         </td>
         <td style="text-align: center; font-size: 0.8rem; color: #1e3a8a; font-weight: 800; white-space: nowrap;">
-            LV 17 · MV 5
+            LV 24 · MV 6
         </td>
         <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
-            8 Sizes
+            14 Sizes
         </td>
         <td style="text-align: center;">
             <span class="material-tag material-copper">CU</span>
             <span class="material-tag material-aluminum">AL</span>
         </td>
         <td style="text-align: center;">
-            <span class="num font-bold" style="color:#1e3a8a;">100,810 m</span>
+            <span class="num font-bold" style="color:#1e3a8a;">73,990 m</span>
         </td>
         <td style="text-align: center;">
-            <span class="num font-bold" style="color:#1e3a8a;">89,650 m</span>
+            <span class="num font-bold" style="color:#1e3a8a;">45,120 m</span>
         </td>
         <td style="text-align: center;">
-            <span class="num font-bold" style="color:#1e3a8a;">117,385 m</span>
+            <span class="num font-bold" style="color:#1e3a8a;">66,960 m</span>
         </td>
         <td style="text-align: center;">
             <span class="num" style="font-size: 1.15rem; color: #1e3a8a; font-weight: 900;">
-                307.85 km/day
+                186.07 km/day
             </span>
         </td>
-    </tr></tbody>
+    </tr>
+</tbody>
                     </table>
                 </div>
 
@@ -2112,7 +2330,7 @@ if (typeof module !== "undefined" && module.exports) { module.exports = METALS_D
     <script src="config.js?v=20261106_111255"></script>
     <script src="wo_voltage.js?v=20261106_111255"></script>
     <script src="cable3d.js?v=20261106_111255"></script>
-    <script src="app.js?v=20261106_111255"></script>
+    <script src="app.js?v=20261106_120849"></script>
 
 
 

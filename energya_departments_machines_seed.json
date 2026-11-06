@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "system": "Energya Cables CMMS & ERP",
+    "source_file": "https___erp-frontend-4ah.pages.dev_.htm",
+    "form_reference": "MN-01F03",
+    "generated_at": "2026-11-04T15:23:00Z",
+    "description": "Seeded departments, machines, and processes reverse engineered from Energya frontend & seed references"
+  },
+  "plants": [
+    {
+      "id": "power_plant",
+      "name_en": "Power Cables Plant",
+      "name_ar": "مصنع كابلات القوى",
+      "code": "PWR"
+    },
+    {
+      "id": "telecom_plant",
+      "name_en": "Telecom & Special Cables Plant",
+      "name_ar": "مصنع كابلات الاتصالات والخاصة",
+      "code": "TEL"
+    }
+  ],
+  "departments": [
+    {
+      "id": "drawing",
+      "code": "DR",
+      "name_en": "Drawing",
+      "name_ar": "السحب",
+      "hue": 210,
+      "pds_tabs": ["trials_drawing", "machines_drawing"],
+      "processes": ["Drawing"],
+      "machines": [
+        { "id": "DR01", "code": "DR01", "name": "Copper Drawing Line 01", "subCategory": "Copper Drawing", "speed_mpm": 1200 },
+        { "id": "DR02", "code": "DR02", "name": "Copper Drawing Line 02", "subCategory": "Copper Drawing", "speed_mpm": 1150 },
+        { "id": "DR03", "code": "DR03", "name": "Copper Drawing Line 03", "subCategory": "Copper Drawing", "speed_mpm": 0 },
+        { "id": "DR04", "code": "DR04", "name": "Aluminum & Al-Alloy Drawing 01", "subCategory": "Aluminum & Al-Alloy Drawing", "speed_mpm": 950 },
+        { "id": "DR05", "code": "DR05", "name": "Aluminum & Al-Alloy Drawing 02", "subCategory": "Aluminum & Al-Alloy Drawing", "speed_mpm": 900 },
+        { "id": "DR06", "code": "DR06", "name": "Copper Multiwire 14-Wire Line 01", "subCategory": "Copper Multiwire", "speed_mpm": 1500 },
+        { "id": "DR07", "code": "DR07", "name": "Copper Multiwire 14-Wire Line 02", "subCategory": "Copper Multiwire", "speed_mpm": 1450 }
+      ]
+    },
+    {
+      "id": "stranding",
+      "code": "ST",
+      "name_en": "Stranding",
+      "name_ar": "التجديل",
+      "hue": 165,
+      "pds_tabs": ["pds_str", "qc_log_str", "machines_str"],
+      "processes": ["Stranding"],
+      "machines": [
+        { "id": "RS01", "code": "RS01", "name": "Rigid Strander 61 - Line 01", "subCategory": "Rigid Strander", "capacity": "61 Bobs" },
+        { "id": "RS02", "code": "RS02", "name": "Rigid Strander 61 - Line 02", "subCategory": "Rigid Strander", "capacity": "61 Bobs" },
+        { "id": "RS03", "code": "RS03", "name": "Rigid Strander 61 - Line 03", "subCategory": "Rigid Strander", "capacity": "61 Bobs" },
+        { "id": "RS04", "code": "RS04", "name": "Rigid Strander 61 - Line 04", "subCategory": "Rigid Strander", "capacity": "61 Bobs" },
+        { "id": "CS01", "code": "CS01", "name": "Circular/Cage Strander 37 - Line 01", "subCategory": "Cage Strander", "capacity": "37 Bobs" },
+        { "id": "CS02", "code": "CS02", "name": "Circular/Cage Strander 37 - Line 02", "subCategory": "Cage Strander", "capacity": "37 Bobs" },
+        { "id": "RS05", "code": "RS05", "name": "Rigid Strander 19 - Line 05", "subCategory": "Rigid Strander", "capacity": "19 Bobs" },
+        { "id": "DTS01", "code": "DTS01", "name": "Double Twist Strander 7 - Line 01", "subCategory": "Double Twist", "capacity": "7 Wires" },
+        { "id": "BN01", "code": "BN01", "name": "Buncher 630 - Line 01", "subCategory": "Buncher", "size_mm": 630 },
+        { "id": "BN02", "code": "BN02", "name": "Buncher 630 - Line 02", "subCategory": "Buncher", "size_mm": 630 },
+        { "id": "BN03", "code": "BN03", "name": "Buncher 630 - Line 03", "subCategory": "Buncher", "size_mm": 630 },
+        { "id": "BN04", "code": "BN04", "name": "Buncher 630 - Line 04", "subCategory": "Buncher", "size_mm": 630 },
+        { "id": "BN05", "code": "BN05", "name": "Buncher 630 - Line 05", "subCategory": "Buncher", "size_mm": 630 },
+        { "id": "BN06", "code": "BN06", "name": "Buncher 800 - Line 06", "subCategory": "Buncher", "size_mm": 800 },
+        { "id": "BN07", "code": "BN07", "name": "Buncher 800 - Line 07", "subCategory": "Buncher", "size_mm": 800 },
+        { "id": "BN08", "code": "BN08", "name": "Buncher 800 - Line 08", "subCategory": "Buncher", "size_mm": 800 }
+      ]
+    },
+    {
+      "id": "extrusion",
+      "code": "EX",
+      "name_en": "Extrusion",
+      "name_ar": "العزل والسترات",
+      "hue": 40,
+      "pds_tabs": ["pds_extrusion", "bleeding_extrusion", "trials_extrusion"],
+      "processes": ["Insulation", "Bedding", "Sheathing", "Sheathing w/Aluminium foil", "Rewinding"],
+      "machines": [
+        { "id": "EX01", "code": "EX01", "name": "LV Extrusion Line 01 (Insulation)", "type": "Insulation" },
+        { "id": "EX02", "code": "EX02", "name": "LV Extrusion Line 02 (Insulation)", "type": "Insulation" },
+        { "id": "EX03", "code": "EX03", "name": "LV Extrusion Line 03 (Bedding)", "type": "Bedding", "alias": "EXT-03" },
+        { "id": "EX04", "code": "EX04", "name": "LV Extrusion Line 04 (Jacketing)", "type": "Jacketing" },
+        { "id": "EX05", "code": "EX05", "name": "LV Extrusion Line 05 (Jacketing)", "type": "Jacketing" },
+        { "id": "EX06", "code": "EX06", "name": "LV Extrusion Line 06 (Insulation)", "type": "Insulation" },
+        { "id": "EX07", "code": "EX07", "name": "LV Extrusion Line 07 (Insulation)", "type": "Insulation" },
+        { "id": "EX08", "code": "EX08", "name": "LV Extrusion Line 08 (Bedding)", "type": "Bedding" },
+        { "id": "EX09", "code": "EX09", "name": "LV Extrusion Line 09 (Bedding)", "type": "Bedding" },
+        { "id": "EX10", "code": "EX10", "name": "LV Extrusion Line 10 (Jacketing)", "type": "Jacketing" },
+        { "id": "EX11", "code": "EX11", "name": "LV Extrusion Line 11 (Jacketing)", "type": "Jacketing", "alias": "EX011" }
+      ]
+    },
+    {
+      "id": "cv",
+      "code": "CV",
+      "name_en": "CV / CCV",
+      "name_ar": "الجهد المتوسط والعالي CCV",
+      "hue": 350,
+      "pds_tabs": ["pds_cv", "bleeding_cv"],
+      "processes": ["Insulation"],
+      "machines": [
+        { "id": "CCV01", "code": "CCV01", "name": "Medium/High Voltage CCV Line 01 (500kV)", "voltage": "500kV", "alias": "CCV1" },
+        { "id": "CCV02", "code": "CCV02", "name": "Medium/High Voltage CCV Line 02 (500kV)", "voltage": "500kV" },
+        { "id": "CCV03", "code": "CCV03", "name": "Extra High Voltage CCV Line 03 (750kV)", "voltage": "750kV" },
+        { "id": "CCV04", "code": "CCV04", "name": "Extra High Voltage CCV Line 04 (750kV)", "voltage": "750kV" },
+        { "id": "CCV05", "code": "CCV05", "name": "Medium Voltage CCV Line 05", "voltage": "MV" }
+      ]
+    },
+    {
+      "id": "assembly",
+      "code": "AS",
+      "name_en": "Assembly",
+      "name_ar": "التجميع (الجماع)",
+      "hue": 250,
+      "pds_tabs": ["pds_assembly"],
+      "processes": ["PPT", "SCWBT", "WBT", "CWS", "AWA", "MICA", "CTS", "STA", "SWA", "ATA", "Rewinding", "Stripping", "Assembly"],
+      "machines": [
+        { "id": "DT01", "code": "DT01", "name": "Drum Twister DT-3000", "size_mm": 3000 },
+        { "id": "DT02", "code": "DT02", "name": "Drum Twister DT-3600", "size_mm": 3600 },
+        { "id": "DT03", "code": "DT03", "name": "Drum Twister DT-4000", "size_mm": 4000 },
+        { "id": "DT04", "code": "DT04", "name": "Drum Twister DT-3200", "size_mm": 3200 },
+        { "id": "BW01", "code": "BW01", "name": "Bow Cabling Line 01", "type": "Bow Cabler" }
+      ]
+    },
+    {
+      "id": "screening",
+      "code": "SC",
+      "name_en": "Screening",
+      "name_ar": "الحجب والشيلد",
+      "hue": 300,
+      "pds_tabs": ["pds_screening_armouring"],
+      "processes": ["CTS", "SCWBT", "WBT", "CWS", "AWA", "MICA", "Rewinding", "Stripping"],
+      "machines": [
+        { "id": "CT01", "code": "CT01", "name": "Copper Tape Line 01", "type": "Copper Tape" },
+        { "id": "CT02", "code": "CT02", "name": "Copper Tape Line 02", "type": "Copper Tape" },
+        { "id": "CT03", "code": "CT03", "name": "Copper Tape Line 03", "type": "Copper Tape" },
+        { "id": "CW01", "code": "CW01", "name": "Copper Wire Screen Line 01", "type": "Wire Screen" },
+        { "id": "CW02", "code": "CW02", "name": "Copper Wire Screen Line 02", "type": "Wire Screen" },
+        { "id": "CW03", "code": "CW03", "name": "Copper Wire Screen Line 03", "type": "Wire Screen" }
+      ]
+    },
+    {
+      "id": "armouring",
+      "code": "AR",
+      "name_en": "Armouring",
+      "name_ar": "التسليح",
+      "hue": 320,
+      "pds_tabs": ["pds_armouring", "trials_armouring"],
+      "processes": ["CTS", "SCWBT", "WBT", "CWS", "AWA", "MICA", "STA", "SWA", "ATA", "Rewinding", "Stripping"],
+      "machines": [
+        { "id": "ST01", "code": "ST01", "name": "Steel Tape Armouring Line 01", "type": "Steel Tape (STA)" },
+        { "id": "ST02", "code": "ST02", "name": "Steel Tape Armouring Line 02", "type": "Steel Tape (STA)" },
+        { "id": "ST03", "code": "ST03", "name": "Steel Tape Armouring Line 03", "type": "Steel Tape (STA)" },
+        { "id": "ST04", "code": "ST04", "name": "Steel Tape Armouring Line 04", "type": "Steel Tape (STA)" },
+        { "id": "SWA01", "code": "SWA01", "name": "Steel Wire Armouring Line 01", "type": "Steel Wire (SWA)" },
+        { "id": "AWA01", "code": "AWA01", "name": "Aluminum Wire Armouring Line 01", "type": "Aluminum Wire (AWA)" }
+      ]
+    },
+    {
+      "id": "rewinding",
+      "code": "RW",
+      "name_en": "Rewinding",
+      "name_ar": "إعادة اللف والتجهيز",
+      "hue": 200,
+      "processes": ["Rewinding", "Stripping"],
+      "machines": [
+        { "id": "RW01", "code": "RW01", "name": "Rewinding Line 01", "type": "Rewinder" },
+        { "id": "RW02", "code": "RW02", "name": "Rewinding Line 02", "type": "Rewinder" }
+      ]
+    }
+  ],
+  "shifts": [
+    { "code": "I", "name_en": "Shift I", "name_ar": "وردية أولى", "hours": "07:30 - 15:30" },
+    { "code": "II", "name_en": "Shift II", "name_ar": "وردية ثانية", "hours": "15:30 - 23:00" },
+    { "code": "III", "name_en": "Shift III", "name_ar": "وردية ثالثة", "hours": "23:00 - 07:30" }
+  ]
+}
+

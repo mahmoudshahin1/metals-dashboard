@@ -1356,6 +1356,12 @@ body {
     border-color: #cbd5e1;
 }
 
+/* Voltage not found in Master Plan (fallback to production data) */
+.family-badge.volt-unverified {
+    opacity: 0.55;
+    border-style: dashed;
+}
+
 /* ===== Unassigned Records Alert Bar ===== */
 .unassigned-alert-bar {
     display: flex;
@@ -1831,11 +1837,11 @@ body {
     border-right: 4px solid #22c55e;
 }
 
-.toast-notification.hidden {
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
-    display: none !important;
+.toast-notification.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    display: none !important;
 }
 
 .toast-icon {
@@ -2753,4 +2759,226 @@ body {
     margin-left: 3px;
     font-weight: 600;
     font-family: var(--font-en);
+}
+
+
+/* ===== Synchronized Vertical Order & Size Stacks ===== */
+.order-v-stack,
+.size-v-stack,
+.conductor-v-stack,
+.family-v-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 3px 0;
+    justify-content: center;
+}
+
+.order-v-row,
+.size-v-row,
+.conductor-v-row,
+.family-v-row {
+    min-height: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    transition: all 0.15s ease;
+}
+
+.order-v-row {
+    justify-content: center;
+}
+
+.size-v-row,
+.conductor-v-row,
+.family-v-row {
+    justify-content: center;
+}
+
+.order-v-row .wo-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: var(--font-en);
+    background: #f8fafc;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    cursor: default;
+    transition: all 0.18s ease;
+}
+
+.size-v-row .size-num-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 9px;
+    font-size: 0.86rem;
+    font-weight: 800;
+    font-family: var(--font-en);
+    border-radius: 6px;
+    white-space: nowrap;
+    cursor: default;
+    transition: all 0.18s ease;
+}
+
+.size-unit-sub {
+    font-size: 0.68rem;
+    font-weight: 700;
+    opacity: 0.75;
+    letter-spacing: -0.2px;
+}
+
+.conductor-v-row .material-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+}
+
+.family-v-row .family-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+}
+
+/* Synchronized Hover Highlights across matching Order & Size */
+.order-v-row.is-synced-hover .wo-pill,
+.order-v-row:hover .wo-pill {
+    background: #e0e7ff !important;
+    border-color: var(--accent-blue) !important;
+    color: var(--accent-blue) !important;
+    transform: translateX(3px);
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.18);
+}
+
+.size-v-row.is-synced-hover .size-num-tag,
+.size-v-row:hover .size-num-tag {
+    transform: scale(1.08);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.conductor-v-row.is-synced-hover .material-tag,
+.conductor-v-row:hover .material-tag {
+    transform: scale(1.06);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.family-v-row.is-synced-hover .family-badge,
+.family-v-row:hover .family-badge {
+    transform: scale(1.06);
+}
+
+/* ===== Work Order Length + Percentage Badge ===== */
+.order-v-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+
+.wo-len-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    font-family: var(--font-en);
+    line-height: 1;
+}
+
+.wo-len-km {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #475569;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: var(--font-en);
+}
+
+.wo-len-pct {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--pct-color, #64748b);
+    background: color-mix(in srgb, var(--pct-color, #64748b) 10%, white);
+    border: 1px solid color-mix(in srgb, var(--pct-color, #64748b) 25%, white);
+    border-radius: 4px;
+    padding: 1px 5px;
+    letter-spacing: -0.3px;
+}
+
+/* keep hover highlight clean when badge is present */
+.order-v-row.is-synced-hover .wo-len-km,
+.order-v-row:hover .wo-len-km {
+    background: #dbeafe;
+    border-color: var(--accent-blue);
+}
+
+.order-v-row.is-synced-hover .wo-len-pct,
+.order-v-row:hover .wo-len-pct {
+    filter: brightness(1.1);
+}
+
+/* ===== Operators per shift (after Machine column) ===== */
+.operator-v-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 0;
+    justify-content: center;
+}
+.operator-v-row {
+    min-height: 34px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-sizing: border-box;
+    padding: 2px 4px;
+    border-radius: 6px;
+}
+.operator-v-row .op-shift-badge {
+    flex: 0 0 auto;
+    min-width: 30px;
+    text-align: center;
+    font-size: 0.74rem;
+    padding: 2px 7px;
+}
+.operator-v-row .op-names {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px 5px;
+    text-align: center;
+    direction: rtl;
+}
+.operator-v-row .op-name {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #0f172a;
+    white-space: nowrap;
+}
+.operator-v-row .op-sep,
+.operator-v-row .op-empty {
+    color: #cbd5e1;
+    font-weight: 700;
+    font-size: 1rem;
 }
