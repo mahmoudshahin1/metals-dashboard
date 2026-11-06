@@ -167,6 +167,7 @@ function initFromPrecompiled(data) {
             label_no: String(r.label_no || '').trim(),
             cable: String(r.cable || '').trim(),
             size: cleanSize(r.size, r.cable),
+            rawSize: String(r.raw_size || r.rawSize || r.size || '').trim(),
             material: String(r.material || '').trim(),
             familyid: String(r.familyid || '').trim(),
             drumno: String(r.drumno || '').trim(),
@@ -261,7 +262,7 @@ function processData(rows1, rows2, metalCsvText) {
     if (Array.isArray(rows2)) {
         rows2.forEach(r => {
             const wo = String(r.workorder || '').trim();
-            if (wo && !wip002Lookup[wo]) {
+            if (!wo && !wip002Lookup[wo]) {
                 wip002Lookup[wo] = {
                     familyid: String(r.familyid || '').trim().toUpperCase(),
                     customer: String(r.customer || '').trim(),
@@ -428,20 +429,10 @@ function finalizeDataSetup() {
 }
 
 // ===== 3) Extraction Rules for Size, Material, and Family =====
-function cleanSize(rawSize, cable) {
-    let s = String(rawSize || '').trim();
-    if (!s || s === '-' || s === '  -   -') {
-        s = extractSizeFromCable(cable);
-    }
-    if (!s || s === '-' || s === '  -   -') return '-';
-
-    s = s.replace(/\s*MM2?$/i, '').trim();
-
-    // If composite (+), take the main portion before +
-    // e.g. 240+120 -> 240, 70+35 -> 70, 120+35 -> 120, 3*240+120 -> 3*240
-    if (s.includes('+')) {
-        s = s.split('+')[0].trim();
-    }
+function cleanSingleSize(str) {
+    let s = String(str || '').trim();
+    if (!s || s === '-' || s === '  -   -') return '';
+    s = s.replace(/\s*MM2?$/i, '').replace(/²/g, '').trim();
 
     // If ratio (/), take the main portion before /
     // e.g. 150/25 -> 150, 35/6 -> 35
@@ -449,22 +440,50 @@ function cleanSize(rawSize, cable) {
         s = s.split('/')[0].trim();
     }
 
-    // Normalize multipliers
-    s = s.replace(/[\*X]/g, 'x');
+    // Normalize multipliers (*, X, × to lowercase x)
+    s = s.replace(/[\*X×]/g, 'x');
     s = s.replace(/\s*x\s*/g, 'x');
 
-    // Extract the actual stranded conductor size (the last number in expressions like 3x240, 4x4x70, 1x240)
-    const stdSizes = new Set(['0.5', '0.75', '1', '1.5', '2.5', '4', '6', '10', '16', '25', '35', '50', '70', '75', '78', '95', '120', '150', '185', '240', '300', '400', '500', '630', '800', '1000', '1200', '1600', '2000']);
+    const stdSizes = new Set([
+        '0.5', '0.75', '1', '1.5', '2.5', '4', '6', '10', '16', '25', '35',
+        '50', '70', '75', '78', '95', '120', '150', '185', '240', '300',
+        '400', '500', '630', '800', '1000', '1200', '1400', '1600', '1800', '2000', '2500'
+    ]);
+
     const parts = s.split('x').map(p => p.trim()).filter(Boolean);
     if (parts.length > 0) {
-        if (stdSizes.has(parts[parts.length - 1])) return parts[parts.length - 1];
-        for (const p of parts) {
-            if (stdSizes.has(p)) return p;
+        const lastPart = parts[parts.length - 1];
+        if (stdSizes.has(lastPart)) return lastPart;
+        if (/^\d+(\.\d+)?$/.test(lastPart)) return lastPart;
+        for (let i = parts.length - 1; i >= 0; i--) {
+            if (stdSizes.has(parts[i])) return parts[i];
         }
-        return parts[parts.length - 1];
+        return lastPart;
     }
 
-    return s || extractSizeFromCable(cable);
+    return s;
+}
+
+function cleanSize(rawSize, cable) {
+    let s = String(rawSize || '').trim();
+    if (!s || s === '-' || s === '  -   -') {
+        s = extractSizeFromCable(cable);
+    }
+    if (!s || s === '-' || s === '  -   -') return '-';
+
+    s = s.replace(/\s*MM2?$/i, '').replace(/²/g, '').trim();
+
+    // If composite (+), e.g. 3x240+120, 240+120, 120+240, 3x150+70, 3x50+25, 3x70+35
+    // Clean each portion around '+' and preserve full size specification
+    if (s.includes('+')) {
+        const subParts = s.split('+').map(part => cleanSingleSize(part)).filter(Boolean);
+        if (subParts.length > 0) {
+            return subParts.join('+');
+        }
+    }
+
+    const cleaned = cleanSingleSize(s);
+    return cleaned || extractSizeFromCable(cable) || '-';
 }
 
 function extractSizeFromCable(cable) {
@@ -472,7 +491,13 @@ function extractSizeFromCable(cable) {
     const m = cable.match(/\b(\d+(?:\.\d+)?\*(?:\d+(?:\.\d+)?\*)*\d+(?:\.\d+)?(?:\+\d+(?:\.\d+)?)?(?:\/\d+(?:\.\d+)?)?)\b/);
     if (m) {
         let s = m[1];
-        if (s.includes('+')) s = s.split('+')[0].trim();
+        if (s.includes('+')) {
+            const subParts = s.split('+').map(part => {
+                const p = part.split('*').map(x => x.trim()).filter(Boolean);
+                return p.length > 0 ? p[p.length - 1] : part;
+            });
+            return subParts.join('+');
+        }
         if (s.includes('/')) s = s.split('/')[0].trim();
         const parts = s.split('*').map(p => p.trim()).filter(Boolean);
         return parts.length > 0 ? parts[parts.length - 1] : s;
@@ -514,6 +539,88 @@ function getFamilyClass(familyId) {
     if (f === 'LV' || f.includes('LV')) return 'lv';
     if (f === 'HV' || f.includes('HV')) return 'hv';
     return 'other';
+}
+
+// ===== Voltage (LV / MV) linked from Master Production Plan =====
+// Source: wo_voltage.js (generated by update_wo_voltage.py) or a Master Plan .xlsx dropped on the page.
+const WO_VOLT_STORAGE_KEY = 'metals_wo_voltage_override';
+const WO_VOLT_NAMES = {
+    LV: 'Low Voltage', MV: 'Medium Voltage', HV: 'High Voltage', CC: 'Control Cables',
+    BC: 'Building Wires', OH: 'Overhead', TC: 'Telecom', IC: 'Instrumentation',
+    BARE: 'Bare Copper', SOLAR: 'Solar', SOLID: 'Solid'
+};
+let woVoltageMap = (typeof WO_VOLTAGE_MAP !== 'undefined') ? WO_VOLTAGE_MAP : {};
+let woVoltageMeta = (typeof WO_VOLTAGE_META !== 'undefined') ? WO_VOLTAGE_META : null;
+try {
+    const saved = JSON.parse(localStorage.getItem(WO_VOLT_STORAGE_KEY) || 'null');
+    if (saved && saved.map) {
+        woVoltageMap = saved.map;
+        woVoltageMeta = saved.meta || woVoltageMeta;
+    }
+} catch (e) { /* ignore corrupt storage */ }
+
+function lookupWoVoltage(wo) {
+    const key = String(wo || '').replace(/\s+/g, ' ').trim();
+    if (!key) return null;
+    if (woVoltageMap[key]) return woVoltageMap[key];
+    // e.g. "1010/26/01 B2" -> "1010/26/01"
+    const base = key.split(' ')[0];
+    return woVoltageMap[base] || null;
+}
+
+// Returns { code, cls, fromPlan, title }. Master Plan wins; otherwise falls back to the old family in production data.
+function getOrderVoltage(wo, fallbackFam) {
+    const planCode = lookupWoVoltage(wo);
+    if (planCode) {
+        return {
+            code: planCode,
+            cls: getFamilyClass(planCode),
+            fromPlan: true,
+            title: `Master Plan: ${WO_VOLT_NAMES[planCode] || planCode}`
+        };
+    }
+    const fb = String(fallbackFam || '').trim() || '-';
+    return {
+        code: fb,
+        cls: getFamilyClass(fb),
+        fromPlan: false,
+        title: 'Not found in Master Plan (using production data family)'
+    };
+}
+
+// Build the W.O -> voltage map from a Master Production Plan workbook (same logic as update_wo_voltage.py)
+function buildVoltageMapFromWorkbook(wb) {
+    const CAT = {
+        'low voltage': 'LV', 'medium voltage': 'MV', 'high voltage': 'HV', 'control cables': 'CC',
+        'building wires': 'BC', 'bare copper': 'BARE', 'overhead': 'OH', 'solar': 'SOLAR',
+        'solid': 'SOLID', 'telecom': 'TC'
+    };
+    const WO_RE = /^\d{1,5}\/\d{2}\/\d{1,3}/;
+    const nh = (s) => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const map = {};
+    const readSheet = (sheetName, woNames, valNames, convert) => {
+        const ws = wb.Sheets[sheetName];
+        if (!ws) return 0;
+        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        if (!rows.length) return 0;
+        const keys = Object.keys(rows[0]);
+        const woKey = keys.find(k => woNames.includes(nh(k)));
+        const valKey = keys.find(k => valNames.includes(nh(k)));
+        if (!woKey || !valKey) return 0;
+        let n = 0;
+        rows.forEach(r => {
+            const wo = String(r[woKey] || '').replace(/\s+/g, ' ').trim();
+            const raw = String(r[valKey] || '').trim();
+            if (!WO_RE.test(wo) || !raw || map[wo]) return;
+            const code = convert(raw);
+            if (code) { map[wo] = code; n++; }
+        });
+        return n;
+    };
+    const n1 = readSheet('Orders', ['w.o.', 'w.o', 'wo'], ['cable category'], v => CAT[v.toLowerCase()] || null);
+    const n2 = readSheet('Backlog 2', ['wo'], ['family'], v => v.toUpperCase());
+    const n3 = readSheet('90 for ADV.', ['work_order'], ['family'], v => v.toUpperCase());
+    return { map, n1, n2, n3 };
 }
 
 // ===== 4) Date Parsing Helpers =====
@@ -778,10 +885,17 @@ function getDistinctDaysCount() {
     return days.size || 1;
 }
 
+// Used only if config.js did not load (missing / blocked / stale cache) so Target/day never disappears
+const FALLBACK_MACHINE_DAILY_TARGETS = {
+    'RS01': 30000, 'RS02': 26000, 'RS03': 30000, 'RS04': 14000, 'RS05': 26000,
+    'RS06': 26000, 'CS01': 30000, 'CS02': 28000, 'DS01': 90000, 'CN': 26000
+};
+
 function getMachineDailyTarget(mName, mRows) {
-    // 1) Explicit target in config.js
-    if (typeof MACHINE_DAILY_TARGETS !== 'undefined' && MACHINE_DAILY_TARGETS[mName] !== undefined) {
-        return MACHINE_DAILY_TARGETS[mName];
+    // 1) Explicit target in config.js (falls back to built-in defaults if config.js is not loaded)
+    const targets = (typeof MACHINE_DAILY_TARGETS !== 'undefined') ? MACHINE_DAILY_TARGETS : FALLBACK_MACHINE_DAILY_TARGETS;
+    if (targets[mName] !== undefined) {
+        return targets[mName];
     }
 
     // 2) Lookup from RATE_TABLE by size & material if applicable
@@ -898,6 +1012,36 @@ function renderKPIs() {
     }
 }
 
+// ===== Operators per shift (shown right after the Machine column) =====
+// Returns the <td> with 3 stacked rows (Shift 1 / 2 / 3). Each row shows the operator(s)
+// who logged production on that machine during that shift in the filtered period.
+function buildOperatorsCell(mName, shiftRowsList) {
+    const rowsHtml = shiftRowsList.map((rows, i) => {
+        const shiftNo = i + 1;
+        // distinct operators ordered by produced length (main operator first)
+        const byOp = {};
+        rows.forEach(r => {
+            const op = normalizeOperatorName(r.operator);
+            if (!op) return;
+            byOp[op] = (byOp[op] || 0) + (r.length || 0);
+        });
+        const ops = Object.keys(byOp).sort((a, b) => byOp[b] - byOp[a]);
+        const nameHtml = ops.length
+            ? ops.map(op => `<span class="op-name" title="${op}">${shortOperatorName(op)}</span>`).join('<span class="op-sep">/</span>')
+            : '<span class="op-empty">—</span>';
+        const fullTitle = ops.length ? ops.join(' / ') : 'No operator';
+        return `
+            <div class="operator-v-row" title="Shift ${shiftNo}: ${fullTitle}">
+                <span class="shift-badge shift-s${shiftNo} op-shift-badge">S${shiftNo}</span>
+                <div class="op-names">${nameHtml}</div>
+            </div>`;
+    }).join('');
+    return `
+        <td style="text-align: center; vertical-align: middle;">
+            <div class="operator-v-stack">${rowsHtml}</div>
+        </td>`;
+}
+
 // ===== 9) Render Main Productivity Table =====
 function renderMainTable() {
     const tbody = document.getElementById('machineShiftBody');
@@ -911,9 +1055,9 @@ function renderMainTable() {
     let sumS2 = 0;
     let sumS3 = 0;
     let sumTotalLen = 0;
-    let sumDailyTarget = 0;
     const allWOsSet = new Set();
     const allSizesSet = new Set();
+    const allVoltByWO = {};
 
     machineList.forEach(mName => {
         const mRows = filteredData.filter(r => r.machine === mName);
@@ -932,79 +1076,165 @@ function renderMainTable() {
         sumS3 += s3;
         sumTotalLen += totalLen;
 
-        const dailyTarget = getMachineDailyTarget(mName, mRows) || 0;
-        sumDailyTarget += dailyTarget;
-
         // 1. Machine
         const machineCell = `
-            <td style="text-align: left; vertical-align: middle;">
+            <td style="text-align: center; vertical-align: middle;">
                 <span class="machine-name">${mName}</span>
             </td>`;
 
-        // 2. W.O (Work Orders)
-        const distinctWOs = [...new Set(mRows.map(r => r.workorder).filter(Boolean))];
-        distinctWOs.forEach(w => allWOsSet.add(w));
-        const woPills = distinctWOs.map(w => `<span class="wo-pill" title="Work Order: ${w}">${w}</span>`).join('');
+        // 1b. Operators - one name per shift, stacked under each other (S1 / S2 / S3)
+        const operatorsCell = buildOperatorsCell(mName, [mRowsS1, mRowsS2, mRowsS3]);
+
+        // Group by distinct Work Order on this machine
+        const machineOrders = [];
+        const seenWOs = new Set();
+
+        mRows.forEach(r => {
+            const wo = String(r.workorder || '').trim();
+            if (!wo) return;
+            if (!seenWOs.has(wo)) {
+                seenWOs.add(wo);
+                const woRows = mRows.filter(row => String(row.workorder || '').trim() === wo);
+                const sizes = [...new Set(woRows.map(row => cleanSize(row.size, row.cable)).filter(Boolean))];
+                const sizeStr = sizes.length > 0 ? sizes.join(', ') : '-';
+                const isCu = woRows.some(row => row.material === 'CU');
+                const mat = isCu ? 'CU' : 'AL';
+                const fams = [...new Set(woRows.map(row => row.familyid).filter(Boolean))];
+                const woMeters = woRows.reduce((sum, row) => sum + (row.length || 0), 0);
+                const volt = getOrderVoltage(wo, fams[0]);
+
+                const rawSizesList = [...new Set(woRows.map(row => String(row.rawSize || row.size || '')).filter(Boolean))];
+                const rawSizesStr = rawSizesList.join(', ');
+
+                machineOrders.push({
+                    workorder: wo,
+                    volt: volt,
+                    size: sizeStr,
+                    rawSize: rawSizesStr,
+                    sizes: sizes,
+                    material: mat,
+                    isCu: isCu,
+                    families: fams,
+                    meters: woMeters
+                });
+
+                allWOsSet.add(wo);
+                allVoltByWO[wo] = volt.code;
+                sizes.forEach(sz => allSizesSet.add(sz));
+            }
+        });
+
+        // 2. W.O (Work Orders) - listed below one another
+        // 3. Cable Size - corresponding size placed directly in front of each order
+        // 4. Conductor - corresponding material placed directly in front of each order
+        // 10. Cable Type - corresponding family placed directly in front of each order
+        let woCellContent = '';
+        let qtCellContent = '';
+        let voltCellContent = '';
+        let sizeCellContent = '';
+        let conductorCellContent = '';
+        let cableTypeCellContent = '';
+
+        if (machineOrders.length > 0) {
+            const woRowsHtml = machineOrders.map((ord, idx) => `
+                <div class="order-v-row" data-machine="${mName}" data-idx="${idx}">
+                    <span class="wo-pill" title="Work Order: ${ord.workorder}">
+                        ${ord.workorder}
+                    </span>
+                </div>`).join('');
+
+            // qt by order: the quantity produced for each order (same figure that used to sit beside the W.O)
+            const qtRowsHtml = machineOrders.map((ord, idx) => `
+                <div class="order-v-row" data-machine="${mName}" data-idx="${idx}">
+                    <span class="wo-len-km" title="Work Order: ${ord.workorder} | ${ord.meters.toLocaleString()} m">${Math.round(ord.meters).toLocaleString('en-US')} m</span>
+                </div>`).join('');
+
+            const sizeRowsHtml = machineOrders.map((ord, idx) => {
+                const recordedTip = (ord.rawSize && ord.rawSize !== ord.size) ? ` | Recorded: ${ord.rawSize}` : '';
+                return `
+                <div class="size-v-row" data-machine="${mName}" data-idx="${idx}">
+                    <span class="size-num-tag ${ord.isCu ? 'cu' : 'al'}" title="Work Order: ${ord.workorder} | Size: ${ord.size} mm² (${ord.material})${recordedTip}">
+                        ${ord.size} <small class="size-unit-sub">mm²</small>
+                    </span>
+                </div>
+            `;}).join('');
+
+            const condRowsHtml = machineOrders.map((ord, idx) => `
+                <div class="conductor-v-row" data-machine="${mName}" data-idx="${idx}">
+                    <span class="material-tag ${ord.isCu ? 'material-copper' : 'material-aluminum'}" title="Conductor: ${ord.material}">
+                        ${ord.material}
+                    </span>
+                </div>
+            `).join('');
+
+            const mFamilies = [...new Set(mRows.map(r => r.familyid).filter(Boolean))];
+            const famRowsHtml = machineOrders.map((ord, idx) => {
+                const fam = ord.families[0] || mFamilies[0] || 'LV';
+                return `
+                    <div class="family-v-row" data-machine="${mName}" data-idx="${idx}">
+                        <span class="family-badge ${getFamilyClass(fam)}">${fam}</span>
+                    </div>`;
+            }).join('');
+
+            // Voltage (LV / MV) from Master Plan - sits between qt by order and Cable Size
+            const voltRowsHtml = machineOrders.map((ord, idx) => `
+                <div class="family-v-row" data-machine="${mName}" data-idx="${idx}">
+                    <span class="family-badge ${ord.volt.cls}${ord.volt.fromPlan ? '' : ' volt-unverified'}" title="Work Order: ${ord.workorder} | ${ord.volt.title}">${ord.volt.code}</span>
+                </div>`).join('');
+
+            woCellContent = `<div class="order-v-stack">${woRowsHtml}</div>`;
+            qtCellContent = `<div class="order-v-stack">${qtRowsHtml}</div>`;
+            voltCellContent = `<div class="family-v-stack">${voltRowsHtml}</div>`;
+            sizeCellContent = `<div class="size-v-stack">${sizeRowsHtml}</div>`;
+            conductorCellContent = `<div class="conductor-v-stack">${condRowsHtml}</div>`;
+            cableTypeCellContent = `<div class="family-v-stack">${famRowsHtml}</div>`;
+        } else {
+            woCellContent = `<span style="color:#94a3b8; font-weight:700;">—</span>`;
+            qtCellContent = `<span style="color:#94a3b8; font-weight:700;">—</span>`;
+            voltCellContent = `<span style="color:#94a3b8; font-weight:700;">—</span>`;
+            sizeCellContent = `<span style="color:#94a3b8; font-weight:700;">—</span>`;
+            conductorCellContent = `<span style="color:#94a3b8; font-weight:700;">—</span>`;
+            cableTypeCellContent = `<span style="color:#94a3b8; font-weight:700;">—</span>`;
+        }
+
         const woCell = `
-            <td style="text-align: left; vertical-align: middle;">
-                <div class="wo-stack">${woPills || '<span style="color:#cbd5e1">-</span>'}</div>
+            <td style="text-align: center; vertical-align: middle;">
+                ${woCellContent}
             </td>`;
 
-        // 3. Cable Size
-        const distinctSizes = [...new Set(mRows.map(r => cleanSize(r.size, r.cable)).filter(Boolean))];
-        distinctSizes.forEach(sz => allSizesSet.add(sz));
-        const sizePills = distinctSizes.map(sz => {
-            const isCu = mRows.some(r => cleanSize(r.size, r.cable) === sz && r.material === 'CU');
-            return `<span class="size-num-tag ${isCu ? 'cu' : 'al'}">${sz}</span>`;
-        }).join('');
+        const voltCell = `
+            <td style="text-align: center; vertical-align: middle;">
+                ${voltCellContent}
+            </td>`;
+
         const sizeCell = `
             <td style="text-align: center; vertical-align: middle;">
-                <div class="size-stack">${sizePills || '<span style="color:#cbd5e1">-</span>'}</div>
+                ${sizeCellContent}
             </td>`;
 
-        // 4. Conductor
-        const distinctMats = [...new Set(mRows.map(r => r.material).filter(Boolean))];
-        const matBadges = distinctMats.map(mat => {
-            const isCu = mat === 'CU';
-            return `<span class="material-tag ${isCu ? 'material-copper' : 'material-aluminum'}">${mat}</span>`;
-        }).join(' ');
         const conductorCell = `
             <td style="text-align: center; vertical-align: middle;">
-                ${matBadges || '<span style="color:#cbd5e1">-</span>'}
+                ${conductorCellContent}
             </td>`;
 
-        // 5. Target/day
-        const dailyTargetKm = dailyTarget > 0 ? (dailyTarget / 1000).toFixed(1) : null;
-        let targetCellHtml = '';
-        if (dailyTargetKm !== null) {
-            targetCellHtml = `
-                <span class="num" style="color: var(--accent-blue); font-weight: 800; font-size: 0.92rem;">
-                    ${dailyTargetKm} <small style="font-size:0.72rem; color:#64748b;">km</small>
-                </span>
-                <span style="font-size: 0.68rem; color: #64748b; display: block; font-family: var(--font-en);">
-                    Target/day
-                </span>`;
-        } else {
-            targetCellHtml = '<span style="color:#94a3b8; font-weight:700;">—</span>';
-        }
-        const targetCell = `
+        // qt by order
+        const qtCell = `
             <td style="text-align: center; vertical-align: middle;">
-                ${targetCellHtml}
+                ${qtCellContent}
             </td>`;
 
-        // 6, 7, 8. Shifts (Shift 1, Shift 2, Shift 3 in km)
-        function formatShiftKm(meters) {
+        // Shifts 1, 2, 3 in meters
+        function formatShiftM(meters) {
             if (meters <= 0) return '<span style="color:#cbd5e1">-</span>';
-            const km = (meters / 1000).toFixed(2);
             return `
-                <div class="shift-cell-wrapper" title="${meters.toLocaleString()} m">
-                    <span class="num" style="font-weight:700;">${km}</span>
-                    <small style="font-size:0.7rem; color:#64748b;">km</small>
+                <div class="shift-cell-wrapper" title="${(meters / 1000).toFixed(2)} km">
+                    <span class="num" style="font-weight:700;">${Math.round(meters).toLocaleString('en-US')}</span>
+                    <small style="font-size:0.7rem; color:#64748b;">m</small>
                 </div>`;
         }
-        const shift1Cell = `<td style="text-align: center; vertical-align: middle;">${formatShiftKm(s1)}</td>`;
-        const shift2Cell = `<td style="text-align: center; vertical-align: middle;">${formatShiftKm(s2)}</td>`;
-        const shift3Cell = `<td style="text-align: center; vertical-align: middle;">${formatShiftKm(s3)}</td>`;
+        const shift1Cell = `<td style="text-align: center; vertical-align: middle;">${formatShiftM(s1)}</td>`;
+        const shift2Cell = `<td style="text-align: center; vertical-align: middle;">${formatShiftM(s2)}</td>`;
+        const shift3Cell = `<td style="text-align: center; vertical-align: middle;">${formatShiftM(s3)}</td>`;
 
         // 9. Production km/day
         const totalKm = (totalLen / 1000).toFixed(2);
@@ -1014,19 +1244,9 @@ function renderMainTable() {
                 <span class="prod-km-unit">km/day</span>
             </td>`;
 
-        // 10. Cable Type (Family ID)
-        const mFamilies = [...new Set(mRows.map(r => r.familyid).filter(Boolean))];
-        const familyBadgesHtml = mFamilies.length > 0
-            ? mFamilies.map(f => `<span class="family-badge ${getFamilyClass(f)}">${f}</span>`).join(' ')
-            : '<span style="color:#cbd5e1">-</span>';
-        const cableTypeCell = `
-            <td style="text-align: center; vertical-align: middle;">
-                ${familyBadgesHtml}
-            </td>`;
-
         const tr = document.createElement('tr');
         tr.className = 'highlight-row';
-        tr.innerHTML = machineCell + woCell + sizeCell + conductorCell + targetCell + shift1Cell + shift2Cell + shift3Cell + prodKmCell + cableTypeCell;
+        tr.innerHTML = machineCell + operatorsCell + woCell + qtCell + voltCell + sizeCell + conductorCell + shift1Cell + shift2Cell + shift3Cell + prodKmCell;
         tbody.appendChild(tr);
     });
 
@@ -1034,13 +1254,25 @@ function renderMainTable() {
     const totalTr = document.createElement('tr');
     totalTr.className = 'total-summary-row';
     totalTr.innerHTML = `
-        <td style="text-align: left; color: var(--accent-blue); font-size: 1.02rem; font-weight: 900;">
+        <td style="text-align: center; color: var(--accent-blue); font-size: 1.02rem; font-weight: 900;">
             Total
         </td>
-        <td style="text-align: left; font-size: 0.82rem; color: #475569; font-weight: 700;">
+        <td style="text-align: center;"></td>
+        <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
             ${allWOsSet.size} Orders
         </td>
-        <td style="text-align: center; font-size: 0.82rem; color: #475569;">
+        <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
+            ${(sumTotalLen / 1000).toFixed(2)} km
+        </td>
+        <td style="text-align: center; font-size: 0.8rem; color: #1e3a8a; font-weight: 800; white-space: nowrap;">
+            ${(() => {
+                const vals = Object.values(allVoltByWO);
+                const lv = vals.filter(v => v === 'LV').length;
+                const mv = vals.filter(v => v === 'MV').length;
+                return `LV ${lv} · MV ${mv}`;
+            })()}
+        </td>
+        <td style="text-align: center; font-size: 0.85rem; color: #1e3a8a; font-weight: 800;">
             ${allSizesSet.size} Sizes
         </td>
         <td style="text-align: center;">
@@ -1048,30 +1280,48 @@ function renderMainTable() {
             <span class="material-tag material-aluminum">AL</span>
         </td>
         <td style="text-align: center;">
-            <span class="num" style="font-size: 1.02rem; color: #1e3a8a; font-weight: 800;">
-                ${(sumDailyTarget / 1000).toFixed(1)} km
-            </span>
+            <span class="num font-bold" style="color:#1e3a8a;">${Math.round(sumS1).toLocaleString('en-US')} m</span>
         </td>
         <td style="text-align: center;">
-            <span class="num font-bold" style="color:#1e3a8a;">${(sumS1 / 1000).toFixed(2)} km</span>
+            <span class="num font-bold" style="color:#1e3a8a;">${Math.round(sumS2).toLocaleString('en-US')} m</span>
         </td>
         <td style="text-align: center;">
-            <span class="num font-bold" style="color:#1e3a8a;">${(sumS2 / 1000).toFixed(2)} km</span>
-        </td>
-        <td style="text-align: center;">
-            <span class="num font-bold" style="color:#1e3a8a;">${(sumS3 / 1000).toFixed(2)} km</span>
+            <span class="num font-bold" style="color:#1e3a8a;">${Math.round(sumS3).toLocaleString('en-US')} m</span>
         </td>
         <td style="text-align: center;">
             <span class="num" style="font-size: 1.15rem; color: #1e3a8a; font-weight: 900;">
                 ${(sumTotalLen / 1000).toFixed(2)} km/day
             </span>
         </td>
-        <td style="text-align: center;">
-            <span class="family-badge lv">LV</span>
-            <span class="family-badge mv">MV</span>
-        </td>
     `;
     tbody.appendChild(totalTr);
+
+    initTableSyncHover();
+}
+
+// ===== Sync Hover Delegate for Machine Orders & Sizes =====
+function initTableSyncHover() {
+    const table = document.getElementById('machineShiftTable');
+    if (!table || table.dataset.syncHoverInit) return;
+    table.dataset.syncHoverInit = 'true';
+
+    table.addEventListener('mouseover', (e) => {
+        const item = e.target.closest('[data-machine][data-idx]');
+        if (!item) return;
+        const mach = item.dataset.machine;
+        const idx = item.dataset.idx;
+        const matches = table.querySelectorAll(`[data-machine="${mach}"][data-idx="${idx}"]`);
+        matches.forEach(el => el.classList.add('is-synced-hover'));
+    });
+
+    table.addEventListener('mouseout', (e) => {
+        const item = e.target.closest('[data-machine][data-idx]');
+        if (!item) return;
+        const mach = item.dataset.machine;
+        const idx = item.dataset.idx;
+        const matches = table.querySelectorAll(`[data-machine="${mach}"][data-idx="${idx}"]`);
+        matches.forEach(el => el.classList.remove('is-synced-hover'));
+    });
 }
 
 // ===== 10) Render Orders Details Table (Section 2) =====
@@ -1119,7 +1369,7 @@ function renderDetailTable() {
     const pageRows = currentDetailData.slice(startIdx, startIdx + pageSize);
 
     if (pageRows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 24px; color: #94a3b8;">لا توجد أوامر مطابقة لخيارات الفلترة</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="13" style="text-align: center; padding: 24px; color: #94a3b8;">لا توجد أوامر مطابقة لخيارات الفلترة</td></tr>`;
         renderPagination(1);
         return;
     }
@@ -1140,6 +1390,7 @@ function renderDetailTable() {
             <td style="font-size: 0.82rem; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.customer}">${r.customer || '-'}</td>
             <td style="text-align: center;"><span class="shift-badge shift-s${r.shift}">${r.shift ? 'S' + r.shift : '-'}</span></td>
             <td style="font-family: var(--font-en); font-weight: 800; color: var(--accent-blue);">${r.machine || '-'}</td>
+            <td style="font-size: 0.85rem; font-weight: 700; white-space: nowrap; direction: rtl; text-align: right;" title="${r.operator || ''}">${r.operator ? shortOperatorName(r.operator) : '—'}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -1305,6 +1556,37 @@ function handleDailyFileSelect(event) {
     event.target.value = '';
 }
 
+// Minimal CSV reader (header row -> objects). Used only when papaparse.min.js is missing.
+function parseCsvBuiltin(text) {
+    text = text.replace(/^\uFEFF/, '');
+    const rows = [];
+    let row = [], field = '', inQ = false;
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQ) {
+            if (c === '"') {
+                if (text[i + 1] === '"') { field += '"'; i++; } else { inQ = false; }
+            } else { field += c; }
+        } else if (c === '"') { inQ = true; }
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\n' || c === '\r') {
+            if (c === '\r' && text[i + 1] === '\n') i++;
+            row.push(field); field = '';
+            if (row.some(v => v !== '')) rows.push(row);
+            row = [];
+        } else { field += c; }
+    }
+    row.push(field);
+    if (row.some(v => v !== '')) rows.push(row);
+    if (rows.length < 2) return [];
+    const header = rows[0].map(h => h.trim());
+    return rows.slice(1).map(r => {
+        const o = {};
+        header.forEach((h, idx) => { o[h] = (r[idx] !== undefined ? r[idx] : '').trim(); });
+        return o;
+    });
+}
+
 function processDailyFile(file) {
     if (!file) return;
     const name = file.name || '';
@@ -1314,7 +1596,22 @@ function processDailyFile(file) {
 
     if (ext === 'csv') {
         if (typeof Papa === 'undefined') {
-            showToast('Error', 'PapaParse library is unavailable to parse CSV', '❌');
+            // papaparse.min.js did not load -> use the built-in CSV reader instead
+            const csvReader = new FileReader();
+            csvReader.onload = function (e) {
+                try {
+                    const rows = parseCsvBuiltin(String(e.target.result || ''));
+                    if (rows.length > 0) {
+                        handleParsedRows(rows, name);
+                    } else {
+                        showToast('Empty File', 'No rows found in CSV file', '⚠️');
+                    }
+                } catch (err) {
+                    showToast('Read Error', err.message, '❌');
+                }
+            };
+            csvReader.onerror = () => showToast('Read Error', 'Could not read the CSV file', '❌');
+            csvReader.readAsText(file, 'utf-8');
             return;
         }
         Papa.parse(file, {
@@ -1340,6 +1637,27 @@ function processDailyFile(file) {
         reader.onload = function (e) {
             try {
                 const data = new Uint8Array(e.target.result);
+
+                // Master Production Plan workbook? (has "Orders" + "Backlog 2" sheets) -> update W.O voltage map only
+                const peek = XLSX.read(data, { type: 'array', bookSheets: true });
+                if (peek.SheetNames.includes('Orders') && peek.SheetNames.includes('Backlog 2')) {
+                    const full = XLSX.read(data, { type: 'array', sheets: ['Orders', 'Backlog 2', '90 for ADV.'] });
+                    const res = buildVoltageMapFromWorkbook(full);
+                    const total = Object.keys(res.map).length;
+                    if (total === 0) {
+                        showToast('Master Plan', 'No work orders / categories found in this workbook', '⚠️');
+                        return;
+                    }
+                    woVoltageMap = res.map;
+                    woVoltageMeta = { source: name, generated: new Date().toISOString().slice(0, 16).replace('T', ' '), total: total };
+                    try {
+                        localStorage.setItem(WO_VOLT_STORAGE_KEY, JSON.stringify({ map: woVoltageMap, meta: woVoltageMeta }));
+                    } catch (err) { console.warn('Could not save voltage map:', err); }
+                    renderMainTable();
+                    showToast('Master Plan linked', `${total} work orders (LV/MV) loaded from ${name}`, '✅');
+                    return;
+                }
+
                 const wb = XLSX.read(data, { type: 'array' });
                 const firstSheetName = wb.SheetNames[0];
                 const rows = XLSX.utils.sheet_to_json(wb.Sheets[firstSheetName], { defval: '' });
@@ -1394,6 +1712,7 @@ function handleParsedRows(rows, fileName) {
     const colSize = findCol(['Size (mm²)', 'WireSize', 'size']) || 'Size (mm²)';
     const colMat = findCol(['Conductor Metal', 'ConductorMaterial', 'material']) || 'Conductor Metal';
     const colCu = findCol(['CU', 'CopperTon', 'cu_ton']) || 'CU';
+    const colAl = findCol(['AL', 'AluminumTon', 'al_ton']) || 'AL';
     const colOp = findCol(['Operator Code / Name', 'Operator', 'CreatedBy']) || 'Operator Code / Name';
 
     const newExtracted = [];
@@ -1469,11 +1788,21 @@ function handleParsedRows(rows, fileName) {
         let rawSize = String(r[colSize] || '').trim();
         let size = cleanSize(rawSize, '');
 
-        let matText = String(r[colMat] || '').toLowerCase();
+        let matText = String(r[colMat] || '').trim().toUpperCase();
         let cuTon = parseFloat(r[colCu]) || 0;
-        let material = (matText.includes('cu') || matText.includes('copper') || matText.includes('نحاس') || cuTon > 0) ? 'CU' : 'AL';
+        let alTon = parseFloat(r[colAl]) || 0;
+        let material = 'AL';
+        if (matText === 'AL' || matText.includes('AL') || matText.includes('الومنيوم') || matText.includes('ألومنيوم')) {
+            material = 'AL';
+        } else if (matText === 'CU' || matText.includes('CU') || matText.includes('COPPER') || matText.includes('نحاس')) {
+            material = 'CU';
+        } else if (cuTon > 0 && cuTon > alTon) {
+            material = 'CU';
+        } else {
+            material = 'AL';
+        }
 
-        let cable = `0.6/1 KV,${material},1*${size}`;
+        let cable = size.includes('+') ? `0.6/1 KV,${material},${size}` : `0.6/1 KV,${material},1*${size}`;
         let familyid = 'LV';
 
         let customer = '-';
@@ -1493,6 +1822,7 @@ function handleParsedRows(rows, fileName) {
             label_no: label_no,
             cable: cable,
             size: size,
+            rawSize: rawSize,
             material: material,
             familyid: familyid,
             drumno: takeup,
@@ -1565,7 +1895,8 @@ function downloadUpdatedIndexHtml() {
         shift: r.shift,
         machine: r.machine,
         dateIso: r.dateIso,
-        dateDisplay: r.dateDisplay
+        dateDisplay: r.dateDisplay,
+        operator: r.operator || ''
     }));
 
     const jsonStr = JSON.stringify(exportable);
@@ -1608,7 +1939,8 @@ function downloadUpdatedMetalsJson() {
         shift: r.shift,
         machine: r.machine,
         dateIso: r.dateIso,
-        dateDisplay: r.dateDisplay
+        dateDisplay: r.dateDisplay,
+        operator: r.operator || ''
     }));
 
     const blob = new Blob([JSON.stringify(exportable, null, 2)], { type: 'application/json' });

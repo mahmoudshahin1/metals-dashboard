@@ -82,31 +82,46 @@ PREFIX_CUSTOMERS = {
     '1628/26': 'Energya Cables'
 }
 
-def clean_wire_size(raw_size):
-    """تنظيف وتوحيد مقاس السلك/الموصل"""
-    s = str(raw_size or '').strip()
+def clean_single_size(s):
+    s = str(s or '').strip()
     if not s or s in ('-', 'nan', 'None'):
         return '-'
     s = s.replace('MM2', '').replace('mm2', '').replace('Mm2', '').replace('²', '').strip()
-    if '+' in s:
-        s = s.split('+')[0].strip()
     if '/' in s:
         s = s.split('/')[0].strip()
-    s = s.replace('*', 'x').replace('X', 'x')
+    s = s.replace('*', 'x').replace('X', 'x').replace('×', 'x')
     parts = [p.strip() for p in s.split('x') if p.strip()]
     if not parts:
         return s
     std_sizes = {
         '0.5', '0.75', '1', '1.5', '2.5', '4', '6', '10', '16', '25', '35',
         '50', '70', '75', '78', '95', '120', '150', '185', '240', '300',
-        '400', '500', '630', '800', '1000', '1200', '1600', '2000'
+        '400', '500', '630', '800', '1000', '1200', '1400', '1600', '1800', '2000', '2500'
     }
-    if parts[-1] in std_sizes:
-        return parts[-1]
-    for p in parts:
+    last = parts[-1]
+    if last in std_sizes:
+        return last
+    try:
+        float(last)
+        return last
+    except ValueError:
+        pass
+    for p in reversed(parts):
         if p in std_sizes:
             return p
-    return parts[-1]
+    return last
+
+def clean_wire_size(raw_size):
+    """تنظيف وتوحيد مقاس السلك/الموصل مع الحفاظ على المقاسات المركبة مثل 240+120 و 1400"""
+    s = str(raw_size or '').strip()
+    if not s or s in ('-', 'nan', 'None'):
+        return '-'
+    s = s.replace('MM2', '').replace('mm2', '').replace('Mm2', '').replace('²', '').strip()
+    if '+' in s:
+        sub_parts = [clean_single_size(p) for p in s.split('+') if p.strip()]
+        if sub_parts:
+            return '+'.join(sub_parts)
+    return clean_single_size(s)
 
 def load_metadata_maps():
     """تحميل جداول البيانات الوصفية من wip002_pr.xls و wip001_pp.xls إذا كانت متوفرة"""
@@ -172,6 +187,16 @@ def find_target_file(custom_arg=None):
                 candidates.append((os.path.getmtime(f), f))
 
     if not candidates:
+        downloads_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
+        if os.path.exists(downloads_dir):
+            for pat in patterns:
+                for f in glob.glob(os.path.join(downloads_dir, pat)):
+                    if f.endswith('.py') or f.endswith('.json'):
+                        continue
+                    if os.path.isfile(f):
+                        candidates.append((os.path.getmtime(f), f))
+
+    if not candidates:
         return None
 
     candidates.sort(key=lambda x: x[0], reverse=True)
@@ -234,6 +259,7 @@ def parse_and_extract_metals(df, wip2_map, wip1_map):
     col_size = find_col(df.columns, ['Size (mm²)', 'WireSize', 'size', 'cablesize'])
     col_mat = find_col(df.columns, ['Conductor Metal', 'ConductorMaterial', 'material'])
     col_cu = find_col(df.columns, ['CU', 'CopperTon', 'cu_ton'])
+    col_al = find_col(df.columns, ['AL', 'AluminumTon', 'al_ton'])
     col_op = find_col(df.columns, ['Operator Code / Name', 'Operator', 'CreatedBy', 'emp_name'])
 
     filtered_count = 0
@@ -330,13 +356,24 @@ def parse_and_extract_metals(df, wip2_map, wip1_map):
         size = clean_wire_size(row.get(col_size, ''))
 
         mat_text = str(row.get(col_mat, '')).strip()
+        mat_upper = mat_text.upper()
         cu_ton = 0.0
         try:
             cu_ton = float(row.get(col_cu, 0) or 0)
         except Exception:
             cu_ton = 0.0
 
-        if 'نحاس' in mat_text or 'cu' in mat_text.lower() or cu_ton > 0:
+        al_ton = 0.0
+        try:
+            al_ton = float(row.get(col_al, 0) or 0)
+        except Exception:
+            al_ton = 0.0
+
+        if mat_upper == 'AL' or 'AL' in mat_upper or 'الومنيوم' in mat_text or 'ألومنيوم' in mat_text:
+            material = 'AL'
+        elif mat_upper == 'CU' or 'CU' in mat_upper or 'نحاس' in mat_text or 'COPPER' in mat_upper:
+            material = 'CU'
+        elif cu_ton > 0 and cu_ton > al_ton:
             material = 'CU'
         else:
             material = 'AL'
@@ -350,7 +387,7 @@ def parse_and_extract_metals(df, wip2_map, wip1_map):
 
         cable = lk2.get('cable') or lk1.get('cable')
         if not cable or cable == 'nan':
-            cable = f"0.6/1 KV,{material},1*{size}"
+            cable = f"0.6/1 KV,{material},{size}" if '+' in size else f"0.6/1 KV,{material},1*{size}"
 
         familyid = lk2.get('familyid')
         if not familyid or familyid == 'nan':
@@ -388,6 +425,7 @@ def parse_and_extract_metals(df, wip2_map, wip1_map):
             'label_no': label_no,
             'cable': cable,
             'size': size,
+            'raw_size': str(row.get(col_size, '')).strip(),
             'material': material,
             'familyid': familyid,
             'drumno': takeup,
@@ -523,6 +561,11 @@ def update_html_cache_buster(html_path='index.html'):
         content
     )
     content = re.sub(
+        r'src="wo_voltage\.js\?v=[^"]*"',
+        f'src="wo_voltage.js?v={new_version}"',
+        content
+    )
+    content = re.sub(
         r'src="cable3d\.js\?v=[^"]*"',
         f'src="cable3d.js?v={new_version}"',
         content
@@ -580,6 +623,16 @@ def main():
         sys.exit(0)
 
     merge_and_save_json(records, dates_found)
+
+    # ربط الماستر بلان: لو في شيت أحدث في مجلد Master_Plan بيحدّث wo_voltage.js (LV / MV لكل أمر شغل)
+    try:
+        import update_wo_voltage
+        update_wo_voltage.auto_update()
+    except SystemExit:
+        pass
+    except Exception as e:
+        print(f"⚠️ تعذر تحديث الماستر بلان: {e}")
+
     update_html_cache_buster()
 
     if auto_push:
