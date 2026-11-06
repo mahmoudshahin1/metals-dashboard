@@ -908,7 +908,7 @@ def prerender_index_html(html_path='index.html', json_path='metals_data.json', v
 
     html = re.sub(r'(<span id="dateDisplayLabel">)[^<]*(</span>)', rf'\g<1>{date_badge_str}\g<2>', html)
     html = re.sub(r'(<span class="active-date-pill" id="activeDatePill">)[^<]*(</span>)', rf'\g<1>📅 {formatted_date_en}\g<2>', html)
-    html = re.sub(r'(<p class="section-subtitle" id="reportDateTitle">)[^<]*(</p>)', rf'\g<1>Daily Production Report: {formatted_date_en} | Target calculated on 1 day\g<2>', html)
+    html = re.sub(r'(<p class="section-subtitle" id="tableSubtitleDate">)[^<]*(</p>)', rf'\g<1>Daily Production Report: {formatted_date_en} | Target calculated on 1 day\g<2>', html)
     html = re.sub(r'(<span class="mini-stat-value" id="totalRecords">)[^<]*(</span>)', rf'\g<1>{total_orders_kpi}\g<2>', html)
     html = re.sub(r'(<input type="date" id="filterDateFrom"[^>]*value=")[^"]*(")', rf'\g<1>{latest_day}\g<2>', html)
     html = re.sub(r'(<input type="date" id="filterDateTo"[^>]*value=")[^"]*(")', rf'\g<1>{latest_day}\g<2>', html)
